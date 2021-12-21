@@ -1,4 +1,10 @@
 # micro2do
+![example workflow](https://github.com/brutovsky/micro2do/actions/workflows/ci.yml/badge.svg)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/4feeaccc698340f98dd02626124f73e2)](https://www.codacy.com/gh/brutovsky/micro2do/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=brutovsky/micro2do&amp;utm_campaign=Badge_Grade)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=brutovsky_micro2do&metric=coverage)](https://sonarcloud.io/summary/new_code?id=brutovsky_micro2do)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=brutovsky_micro2do&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=brutovsky_micro2do)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=brutovsky_micro2do&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=brutovsky_micro2do)
+
 This is my pet project to learn microservices architecture.
 
 ## Description

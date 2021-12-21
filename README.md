@@ -1,4 +1,7 @@
 # micro2do
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/e0ac3ab93fa34cfcaa5677de4d797544)](https://app.codacy.com/gh/brutovsky/micro2do?utm_source=github.com&utm_medium=referral&utm_content=brutovsky/micro2do&utm_campaign=Badge_Grade_Settings)
+
 This is my pet project to learn microservices architecture.
 
 ## Description

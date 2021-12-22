@@ -9,6 +9,11 @@
     <packaging>jar</packaging>
     <name>todo-service</name>
 
+    <properties>
+        <modelmapper.version>2.4.5</modelmapper.version>
+        <openapi.version>1.6.2</openapi.version>
+    </properties>
+
     <parent>
         <artifactId>micro2do</artifactId>
         <groupId>com.brtvsk</groupId>
@@ -35,7 +40,13 @@
         <dependency>
             <groupId>org.modelmapper</groupId>
             <artifactId>modelmapper</artifactId>
-            <version>2.4.5</version>
+            <version>${modelmapper.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>${openapi.version}</version>
         </dependency>
     </dependencies>
 

@@ -7,10 +7,10 @@ import java.util.Optional;
 
 public interface TodoService {
 
-    TodoDto create(final TodoDto todoDto);
+    TodoDto create(TodoDto todoDto);
     Optional<TodoDto> findById(String id);
     List<TodoDto> findAll();
-    TodoDto replace(final TodoDto todoDto);
+    TodoDto replace(TodoDto todoDto);
     void delete(String id);
 
 }

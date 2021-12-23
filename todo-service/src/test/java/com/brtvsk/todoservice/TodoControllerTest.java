@@ -32,8 +32,8 @@ class TodoControllerTest {
     @MockBean
     private TodoService todoService;
 
-    TodoDto todoCreationRequest;
-    TodoDto expectedTodoResponse;
+    private TodoDto todoCreationRequest;
+    private TodoDto expectedTodoResponse;
 
     private final String testId = "fd324dsfdsfsdf";
     private final Date testCreationTime = Date.from(Instant.now());

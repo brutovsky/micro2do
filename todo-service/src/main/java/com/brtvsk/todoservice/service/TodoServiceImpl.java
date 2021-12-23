@@ -16,15 +16,15 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class TodoServiceImpl implements TodoService{
+public class TodoServiceImpl implements TodoService {
 
     private final TodoRepository todoRepository;
     private final TodoMapper todoMapper;
 
     @Override
-    public TodoDto create(TodoDto dto) {
+    public TodoDto create(final TodoDto dto) {
         Todo todo = todoMapper.toEntity(dto);
-        if(Objects.isNull(todo.getCreationTime())){
+        if (Objects.isNull(todo.getCreationTime())) {
             todo.setCreationTime(Date.from(Instant.now()));
         }
         todo = todoRepository.save(todo);
@@ -32,28 +32,29 @@ public class TodoServiceImpl implements TodoService{
     }
 
     @Override
-    public Optional<TodoDto> findById(String id) {
+    public Optional<TodoDto> findById(final String id) {
         return todoRepository.findById(id).map(todoMapper::toDto);
     }
 
     @Override
     public List<TodoDto> findAll() {
-        return todoRepository.findAll().stream().map(todoMapper::toDto).collect(Collectors.toList());
+        return todoRepository.findAll().stream()
+                .map(todoMapper::toDto).collect(Collectors.toList());
     }
 
     @Override
-    public TodoDto replace(TodoDto dto) {
+    public TodoDto replace(final TodoDto dto) {
         Todo todo = todoMapper.toEntity(dto);
-        if(todo.getId() != null && todoRepository.findById(todo.getId()).isPresent()) {
+        if (todo.getId() != null && todoRepository.findById(todo.getId()).isPresent()) {
             todo = todoRepository.save(todo);
             return todoMapper.toDto(todo);
-        }else {
+        } else {
             return create(dto);
         }
     }
 
     @Override
-    public void delete(String id) {
+    public void delete(final String id) {
         todoRepository.findById(id).ifPresent(todoRepository::delete);
     }
 

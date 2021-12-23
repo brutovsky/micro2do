@@ -12,7 +12,7 @@ class RestControllerAdvice {
     @ResponseBody
     @ExceptionHandler(TodoNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    String employeeNotFoundHandler(TodoNotFoundException ex) {
+    String employeeNotFoundHandler(final TodoNotFoundException ex) {
         return ex.getMessage();
     }
 }

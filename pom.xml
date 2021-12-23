@@ -26,6 +26,7 @@
 		<java.version>17</java.version>
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
+		<checkstyle.version>3.1.2</checkstyle.version>
 	</properties>
 
 	<dependencies>
@@ -67,7 +68,35 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>${checkstyle.version}</version>
+				<configuration>
+					<configLocation>/src/main/resources/checkstyle.xml</configLocation>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>${checkstyle.version}</version>
+				<configuration>
+					<configLocation>/src/main/resources/checkstyle.xml</configLocation>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
 
 </project>

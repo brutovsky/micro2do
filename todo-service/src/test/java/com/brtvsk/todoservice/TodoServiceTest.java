@@ -24,14 +24,14 @@ import static org.mockito.Mockito.times;
 @RunWith(MockitoJUnitRunner.class)
 public class TodoServiceTest {
 
-    private TodoRepository repository = Mockito.mock(TodoRepository.class);
-    private TodoMapper todoMapper = Mockito.mock(TodoMapper.class);
-    private TodoService service = new TodoServiceImpl(repository, todoMapper);
+    private final TodoRepository repository = Mockito.mock(TodoRepository.class);
+    private final TodoMapper todoMapper = Mockito.mock(TodoMapper.class);
+    private final TodoService service = new TodoServiceImpl(repository, todoMapper);
 
-    TodoDto todoCreationDto;
-    Todo mappedTodo;
-    Todo expectedTodo;
-    TodoDto expectedTodoDto;
+    private TodoDto todoCreationDto;
+    private Todo mappedTodo;
+    private Todo expectedTodo;
+    private TodoDto expectedTodoDto;
 
     private final String testId = "fd324dsfdsfsdf";
     private final Date testCreationTime = Date.from(Instant.now());
@@ -40,7 +40,7 @@ public class TodoServiceTest {
     private final Set<String> testTags = Set.of("Tag 1", "Tag 2", "Tag 3");
 
     @Before
-    public void init(){
+    public void init() {
         todoCreationDto = new TodoDto();
         todoCreationDto.setTitle(testTitle);
         todoCreationDto.setDescription(testDescription);

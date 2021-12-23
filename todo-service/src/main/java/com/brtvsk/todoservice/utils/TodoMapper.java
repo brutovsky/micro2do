@@ -6,20 +6,26 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
-import java.util.Objects;
-
 @Component
 @RequiredArgsConstructor
 public class TodoMapper {
 
     private final ModelMapper modelMapper;
 
-    public Todo toEntity(TodoDto dto) {
-        return Objects.isNull(dto) ? null : modelMapper.map(dto, Todo.class);
+    public Todo toEntity(final TodoDto dto) {
+        if (dto == null) {
+            return null;
+        } else {
+            return modelMapper.map(dto, Todo.class);
+        }
     }
 
-    public TodoDto toDto(Todo entity) {
-        return Objects.isNull(entity) ? null : modelMapper.map(entity, TodoDto.class);
+    public TodoDto toDto(final Todo entity) {
+        if (entity == null) {
+            return null;
+        } else {
+            return modelMapper.map(entity, TodoDto.class);
+        }
     }
 
 }

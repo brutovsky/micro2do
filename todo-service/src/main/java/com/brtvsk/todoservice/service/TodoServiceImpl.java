@@ -12,7 +12,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -38,8 +37,7 @@ public class TodoServiceImpl implements TodoService {
 
     @Override
     public List<TodoDto> findAll() {
-        return todoRepository.findAll().stream()
-                .map(todoMapper::toDto).collect(Collectors.toList());
+        return todoRepository.findAll().stream().map(todoMapper::toDto).toList();
     }
 
     @Override

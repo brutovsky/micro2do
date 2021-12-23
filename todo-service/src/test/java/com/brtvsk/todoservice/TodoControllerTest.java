@@ -63,7 +63,7 @@ class TodoControllerTest {
         final String expectedResponse = objectMapper.writeValueAsString(expectedTodoResponse);
 
         mockMvc.perform(
-                        MockMvcRequestBuilders.post("/todos")
+                        MockMvcRequestBuilders.post("/api/todo")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(jsonRequest)
                 )

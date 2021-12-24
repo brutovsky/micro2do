@@ -1,31 +1,23 @@
 package com.brtvsk.todoservice.utils;
 
-import com.brtvsk.todoservice.model.Todo;
-import com.brtvsk.todoservice.model.TodoDto;
-import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Component;
+import com.brtvsk.todoservice.model.dto.OptionalRequestTodoDto;
+import com.brtvsk.todoservice.model.dto.RequestTodoDto;
+import com.brtvsk.todoservice.model.entity.Todo;
+import com.brtvsk.todoservice.model.dto.ImmutableRequestTodoDto;
+import com.brtvsk.todoservice.model.dto.ImmutableResponseTodoDto;
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
 
-@Component
-@RequiredArgsConstructor
-public class TodoMapper {
+@Mapper( uses = {OptionalMapper.class})
+public interface TodoMapper {
 
-    private final ModelMapper modelMapper;
+    TodoMapper INSTANCE = Mappers.getMapper(TodoMapper.class);
 
-    public Todo toEntity(final TodoDto dto) {
-        if (dto == null) {
-            return null;
-        } else {
-            return modelMapper.map(dto, Todo.class);
-        }
-    }
+    ImmutableRequestTodoDto toRequestTodoDto(Todo entity);
 
-    public TodoDto toDto(final Todo entity) {
-        if (entity == null) {
-            return null;
-        } else {
-            return modelMapper.map(entity, TodoDto.class);
-        }
-    }
+    ImmutableResponseTodoDto toResponseTodoDto(Todo entity);
 
+    Todo fromOptionalRequestTodoDto(OptionalRequestTodoDto dto);
+
+    Todo fromRequestTodoDto(RequestTodoDto dto);
 }

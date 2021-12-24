@@ -1,7 +1,9 @@
 package com.brtvsk.todoservice.repository;
 
-import com.brtvsk.todoservice.model.Todo;
+import com.brtvsk.todoservice.model.entity.Todo;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface TodoRepository extends MongoRepository<Todo, String> {
+import java.util.UUID;
+
+public interface TodoRepository extends MongoRepository<Todo, UUID> {
 }

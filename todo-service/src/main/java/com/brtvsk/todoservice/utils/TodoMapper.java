@@ -2,8 +2,8 @@ package com.brtvsk.todoservice.utils;
 
 import com.brtvsk.todoservice.model.dto.OptionalRequestTodoDto;
 import com.brtvsk.todoservice.model.dto.RequestTodoDto;
+import com.brtvsk.todoservice.model.dto.ResponseTodoDto;
 import com.brtvsk.todoservice.model.entity.Todo;
-import com.brtvsk.todoservice.model.dto.ImmutableResponseTodoDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -12,7 +12,7 @@ public interface TodoMapper {
 
     TodoMapper INSTANCE = Mappers.getMapper(TodoMapper.class);
 
-    ImmutableResponseTodoDto toResponseTodoDto(Todo entity);
+    ResponseTodoDto toResponseTodoDto(Todo entity);
 
     Todo fromOptionalRequestTodoDto(OptionalRequestTodoDto dto);
 

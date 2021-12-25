@@ -19,10 +19,9 @@ public class MongoChangelog {
         List<Todo> todoList = List.of(
                 createNewTodo("Title 1", "Description 1", Set.of("Tag 1", "Tag 2")),
                 createNewTodo("Title 2", "Description 2", Set.of("Tag 2", "Tag 1")),
-                createNewTodo("Title 3", "Description 3", Set.of("Tag 3", "Tag 2")),
-                createNewTodo("Title 4", "Description 4", Set.of("Tag 4", "Tag 2"))
+                createNewTodo("Title 3", "Description 3", Set.of("Tag 3", "Tag 4")),
+                createNewTodo("Title 4", "Description 4", Set.of("Tag 4", "Tag 5"))
         );
-        System.out.println(todoList);
         todoList.forEach(todoRepository::save);
     }
 
@@ -30,7 +29,7 @@ public class MongoChangelog {
         Todo todo = new Todo();
         todo.setId(UUID.randomUUID());
         todo.setTitle(title);
-        todo.setDescription(title);
+        todo.setDescription(description);
         todo.setDone(Boolean.FALSE);
         todo.setTags(tags);
         todo.setCreationTime(Date.from(Instant.now()));

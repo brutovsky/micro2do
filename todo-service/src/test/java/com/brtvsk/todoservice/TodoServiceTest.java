@@ -3,7 +3,6 @@ package com.brtvsk.todoservice;
 import com.brtvsk.todoservice.model.dto.*;
 import com.brtvsk.todoservice.model.entity.Todo;
 import com.brtvsk.todoservice.repository.TodoRepository;
-import com.brtvsk.todoservice.service.TodoService;
 import com.brtvsk.todoservice.service.TodoServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,10 +21,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public class TodoServiceTest {
+class TodoServiceTest {
 
     private final TodoRepository repository = Mockito.mock(TodoRepository.class);
-    private final TodoService service = new TodoServiceImpl(repository);
+    private final TodoServiceImpl service = new TodoServiceImpl(repository);
 
     private RequestTodoDto todoCreationDto;
     private Todo expectedTodo;

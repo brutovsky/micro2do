@@ -31,7 +31,7 @@ public class TodoController {
     }
 
     @GetMapping
-    public List<? extends ResponseTodoDto> all(@RequestParam(name = "done") Optional<Boolean> done) {
+    public List<ResponseTodoDto> all(@RequestParam(name = "done") Optional<Boolean> done) {
         if (done.isPresent()) {
             return todoService.findAllDone(done.get());
         } else {

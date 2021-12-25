@@ -3,10 +3,10 @@ package com.brtvsk.todoservice.repository;
 import java.util.List;
 import java.util.Optional;
 
-public interface Repository<Entity, Id> {
-    Entity save(Entity entity);
-    Optional<Entity> findById(Id id);
-    List<Entity> findAll();
-    void delete(Entity entity);
-    void deleteById(Id id);
+public interface Repository<T, ID> {
+    T save(T entity);
+    Optional<T> findById(ID id);
+    List<T> findAll();
+    void delete(T entity);
+    void deleteById(ID id);
 }

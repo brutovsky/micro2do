@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
 
-public final class TodoTestUtils {
+final class TodoTestUtils {
     public static final UUID TEST_ID = UUID.randomUUID();
     public static final Date TEST_CREATION_TIME = Date.from(Instant.now());
     public static final Date TEST_COMPLETION_TIME = Date.from(Instant.now().plus(4, ChronoUnit.HOURS));

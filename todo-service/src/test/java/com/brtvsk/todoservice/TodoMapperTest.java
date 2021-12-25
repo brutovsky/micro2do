@@ -8,13 +8,13 @@ import org.junit.jupiter.api.Test;
 import static com.brtvsk.todoservice.TodoTestUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TodoMapperTest {
+class TodoMapperTest {
 
     private Todo todo;
     private final TodoMapper mapper = TodoMapper.INSTANCE;
 
     @Test
-    public void shouldMapRequestTodoDto() {
+    void shouldMapRequestTodoDto() {
         RequestTodoDto requestTodoDto = ImmutableRequestTodoDto.builder()
                 .title(TEST_TITLE)
                 .description(TEST_DESCRIPTION)
@@ -32,7 +32,7 @@ public class TodoMapperTest {
     }
 
     @Test
-    public void shouldMapOptionalRequestTodoDto() {
+    void shouldMapOptionalRequestTodoDto() {
         OptionalRequestTodoDto optionalRequestTodoDto = ImmutableOptionalRequestTodoDto.builder()
                 .description(TEST_DESCRIPTION)
                 .completionTime(TEST_COMPLETION_TIME)
@@ -48,15 +48,15 @@ public class TodoMapperTest {
     }
 
     @Test
-    public void shouldMapTodo() {
+    void shouldMapTodo() {
         ResponseTodoDto responseTodoDto = mapper.toResponseTodoDto(createTestTodo());
 
         assertThat(responseTodoDto).isNotNull();
         assertThat(responseTodoDto.getId()).isEqualTo(TEST_ID);
         assertThat(responseTodoDto.getTitle()).isEqualTo(TEST_TITLE);
-        assertThat(responseTodoDto.getDescription().get()).isEqualTo(TEST_DESCRIPTION);
+        assertThat(responseTodoDto.getDescription()).contains(TEST_DESCRIPTION);
         assertThat(responseTodoDto.getCreationTime()).isEqualTo(TEST_CREATION_TIME);
-        assertThat(responseTodoDto.getCompletionTime().get()).isEqualTo(TEST_COMPLETION_TIME);
+        assertThat(responseTodoDto.getCompletionTime()).contains(TEST_COMPLETION_TIME);
         assertThat(responseTodoDto.getDone()).isEqualTo(IS_DONE);
         assertThat(responseTodoDto.getTags()).containsSame(TEST_TAGS);
     }

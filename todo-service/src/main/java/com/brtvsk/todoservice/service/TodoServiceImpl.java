@@ -42,12 +42,12 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public List<? extends ResponseTodoDto> findAll() {
+    public List<ResponseTodoDto> findAll() {
         return todoRepository.findAll().stream().map(TodoMapper.INSTANCE::toResponseTodoDto).toList();
     }
 
     @Override
-    public List<? extends ResponseTodoDto> findAllDone(boolean done) {
+    public List<ResponseTodoDto> findAllDone(boolean done) {
         return todoRepository.findAllDone(done).stream().map(TodoMapper.INSTANCE::toResponseTodoDto).toList();
     }
 

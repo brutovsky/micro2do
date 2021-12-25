@@ -14,6 +14,7 @@
         <openapi.version>1.6.2</openapi.version>
         <immutables.version>2.8.2</immutables.version>
         <org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
+        <mongock.version>4.1.19</mongock.version>
     </properties>
 
     <parent>
@@ -44,7 +45,37 @@
             <artifactId>springdoc-openapi-ui</artifactId>
             <version>${openapi.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.github.cloudyrock.mongock</groupId>
+            <artifactId>mongock-bom</artifactId>
+            <version>${mongock.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.cloudyrock.mongock</groupId>
+            <artifactId>mongock-spring-v5</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.cloudyrock.mongock</groupId>
+            <artifactId>mongodb-springdata-v3-driver</artifactId>
+        </dependency>
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.github.cloudyrock.mongock</groupId>
+                <artifactId>mongock-bom</artifactId>
+                <version>${mongock.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
         <plugins>

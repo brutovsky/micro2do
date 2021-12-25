@@ -12,10 +12,10 @@ import java.util.Set;
 @JsonSerialize(as = ImmutableOptionalRequestTodoDto.class)
 @JsonDeserialize(as = ImmutableOptionalRequestTodoDto.class)
 public interface OptionalRequestTodoDto {
-    Optional<String> title();
-    Optional<String> description();
-    Optional<Boolean> isDone();
-    Optional<Set<String>> tags();
-    Optional<Date> creationTime();
-    Optional<Date> completionTime();
+    Optional<String> getTitle();
+    Optional<String> getDescription();
+    Optional<Boolean> getDone();
+    Optional<Set<String>> getTags();
+    Optional<Date> getCreationTime();
+    Optional<Date> getCompletionTime();
 }

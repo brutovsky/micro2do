@@ -65,12 +65,12 @@ public class TodoServiceImpl implements TodoService {
         Todo todo = todoRepository.findById(id)
                 .orElseThrow(() -> new TodoNotFoundException(id.toString()));
 
-        todo.setTitle(dto.title().orElse(todo.getTitle()));
-        todo.setDescription(dto.description().orElse(todo.getDescription()));
-        todo.setDone(dto.isDone().orElse(todo.isDone()));
-        todo.setTags(dto.tags().orElse(todo.getTags()));
-        todo.setCreationTime(dto.creationTime().orElse(todo.getCreationTime()));
-        todo.setCompletionTime(dto.completionTime().orElse(todo.getCompletionTime()));
+        todo.setTitle(dto.getTitle().orElse(todo.getTitle()));
+        todo.setDescription(dto.getDescription().orElse(todo.getDescription()));
+        todo.setDone(dto.getDone().orElse(todo.isDone()));
+        todo.setTags(dto.getTags().orElse(todo.getTags()));
+        todo.setCreationTime(dto.getCreationTime().orElse(todo.getCreationTime()));
+        todo.setCompletionTime(dto.getCompletionTime().orElse(todo.getCompletionTime()));
 
         return TodoMapper.INSTANCE.toResponseTodoDto(todoRepository.save(todo));
     }

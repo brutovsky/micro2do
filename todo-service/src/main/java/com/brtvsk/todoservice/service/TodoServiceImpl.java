@@ -47,6 +47,11 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
+    public List<? extends ResponseTodoDto> findAllDone(boolean done) {
+        return todoRepository.findAllDone(done).stream().map(TodoMapper.INSTANCE::toResponseTodoDto).toList();
+    }
+
+    @Override
     public ResponseTodoDto replace(final UUID id, final RequestTodoDto dto) {
         todoRepository.findById(id)
                 .orElseThrow(() -> new TodoNotFoundException(id.toString()));
@@ -72,7 +77,7 @@ public class TodoServiceImpl implements TodoService {
 
     @Override
     public void delete(final UUID id) {
-        todoRepository.findById(id).ifPresent(todoRepository::delete);
+        todoRepository.deleteById(id);
     }
 
 }

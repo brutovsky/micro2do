@@ -1,9 +1,10 @@
 package com.brtvsk.todoservice.repository;
 
 import com.brtvsk.todoservice.model.entity.Todo;
-import org.springframework.data.mongodb.repository.MongoRepository;
 
+import java.util.List;
 import java.util.UUID;
 
-public interface TodoRepository extends MongoRepository<Todo, UUID> {
+public interface TodoRepository extends Repository<Todo, UUID> {
+    List<Todo> findAllDone(boolean done);
 }

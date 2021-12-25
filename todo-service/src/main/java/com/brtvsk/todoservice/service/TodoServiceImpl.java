@@ -27,7 +27,6 @@ public class TodoServiceImpl implements TodoService {
 
     @Override
     public ResponseTodoDto create(final RequestTodoDto dto) {
-        System.out.println(dto);
         Todo todo = TodoMapper.INSTANCE.fromRequestTodoDto(dto);
         todo.setId(UUID.randomUUID());
         todo.setCreationTime(dto.getCreationTime().orElse(Date.from(Instant.now())));

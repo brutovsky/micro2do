@@ -3,12 +3,12 @@ package com.brtvsk.todoservice;
 import com.brtvsk.todoservice.model.dto.*;
 import com.brtvsk.todoservice.model.entity.Todo;
 import com.brtvsk.todoservice.repository.TodoRepository;
+import com.brtvsk.todoservice.service.TodoService;
 import com.brtvsk.todoservice.service.TodoServiceImpl;
 import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,17 +20,16 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
 class TodoServiceTest {
 
     private final TodoRepository repository = Mockito.mock(TodoRepository.class);
-    private final TodoServiceImpl service = new TodoServiceImpl(repository);
+    private final TodoService service = new TodoServiceImpl(repository);
 
     private RequestTodoDto todoCreationDto;
     private Todo expectedTodo;
     private ResponseTodoDto expectedTodoDto;
 
-    @Before
+    @BeforeEach
     public void init() {
         todoCreationDto = ImmutableRequestTodoDto.builder()
                 .title(TEST_TITLE)
@@ -114,7 +113,7 @@ class TodoServiceTest {
 
     @Test
     public void shouldFindTodo() {
-        Mockito.when(repository.findById(any(UUID.class))).thenReturn(Optional.of(expectedTodo));
+        Mockito.when(repository.findById(TEST_ID)).thenReturn(Optional.of(expectedTodo));
 
         Optional<ResponseTodoDto> optionalTodo = service.findById(TEST_ID);
 

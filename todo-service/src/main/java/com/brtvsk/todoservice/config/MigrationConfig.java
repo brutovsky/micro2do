@@ -1,6 +1,6 @@
 package com.brtvsk.todoservice.config;
 
-import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.SpringDataMongo3Driver;
+import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.SpringDataMongoV3Driver;
 import com.github.cloudyrock.spring.v5.MongockSpring5;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -18,7 +18,7 @@ public class MigrationConfig {
     @Bean
     public MongockSpring5.MongockApplicationRunner mongockApplicationRunnerBean(ApplicationContext springContext, MongoTemplate mongoTemplate) {
         return MongockSpring5.builder()
-                .setDriver(SpringDataMongo3Driver.withDefaultLock(mongoTemplate))
+                .setDriver(SpringDataMongoV3Driver.withDefaultLock(mongoTemplate))
                 .addChangeLogsScanPackages(List.of(scanPackage))
                 .setSpringContext(springContext)
                 .buildApplicationRunner();

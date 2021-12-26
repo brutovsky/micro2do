@@ -1,5 +1,6 @@
 package com.brtvsk.todoservice;
 
+import com.brtvsk.todoservice.exception.TodoNotFoundException;
 import com.brtvsk.todoservice.model.dto.*;
 import com.brtvsk.todoservice.model.entity.Todo;
 import com.brtvsk.todoservice.repository.TodoRepository;
@@ -15,6 +16,7 @@ import java.util.UUID;
 
 import static com.brtvsk.todoservice.TodoTestUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -160,6 +162,11 @@ class TodoServiceTest {
     public void shouldDeleteTodo() {
         service.delete(TEST_ID);
         verify(repository, times(1)).deleteById(TEST_ID);
+    }
+
+    @Test
+    public void shouldThrowTodoNotFoundException() {
+        assertThrows(TodoNotFoundException.class, () -> service.replace(UUID.randomUUID(), todoCreationDto));
     }
 
 }

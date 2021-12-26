@@ -5,7 +5,6 @@ import com.brtvsk.todoservice.model.entity.Todo;
 import com.brtvsk.todoservice.repository.TodoRepository;
 import com.brtvsk.todoservice.service.TodoService;
 import com.brtvsk.todoservice.service.TodoServiceImpl;
-import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

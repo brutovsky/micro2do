@@ -5,7 +5,6 @@ import com.brtvsk.todoservice.model.dto.*;
 import com.brtvsk.todoservice.service.TodoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -20,7 +19,7 @@ import java.util.UUID;
 
 import static com.brtvsk.todoservice.TodoTestUtils.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.*;
 
 @WebMvcTest(TodoController.class)
 class TodoControllerTest {
@@ -52,7 +51,7 @@ class TodoControllerTest {
                 .tags(TEST_TAGS)
                 .build();
 
-        Mockito.when(todoService.create(any()))
+        when(todoService.create(any()))
                 .thenReturn(expectedTodoResponse);
 
         final String jsonRequest = objectMapper.writeValueAsString(todoCreationRequest);
@@ -66,7 +65,7 @@ class TodoControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(expectedResponse));
 
-        Mockito.verify(todoService).create(todoCreationRequest);
+        verify(todoService).create(todoCreationRequest);
     }
 
     @Test
@@ -88,7 +87,7 @@ class TodoControllerTest {
                 .tags(TEST_TAGS)
                 .build();
 
-        Mockito.when(todoService.replace(any(UUID.class), any(RequestTodoDto.class)))
+        when(todoService.replace(any(UUID.class), any(RequestTodoDto.class)))
                 .thenReturn(expectedTodoResponse);
 
         final String jsonRequest = objectMapper.writeValueAsString(todoCreationRequest);
@@ -102,7 +101,7 @@ class TodoControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(expectedResponse));
 
-        Mockito.verify(todoService).replace(TEST_ID, todoCreationRequest);
+        verify(todoService).replace(TEST_ID, todoCreationRequest);
     }
 
     @Test
@@ -124,7 +123,7 @@ class TodoControllerTest {
                 .completionTime(TEST_COMPLETION_TIME)
                 .build();
 
-        Mockito.when(todoService.update(any(UUID.class), any(OptionalRequestTodoDto.class)))
+        when(todoService.update(any(UUID.class), any(OptionalRequestTodoDto.class)))
                 .thenReturn(expectedTodoResponse);
 
         final String jsonRequest = objectMapper.writeValueAsString(optionalTodoCreationRequest);
@@ -138,7 +137,7 @@ class TodoControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(expectedResponse));
 
-        Mockito.verify(todoService).update(TEST_ID, optionalTodoCreationRequest);
+        verify(todoService).update(TEST_ID, optionalTodoCreationRequest);
     }
 
     @Test
@@ -153,7 +152,7 @@ class TodoControllerTest {
                 .creationTime(TEST_CREATION_TIME)
                 .build();
 
-        Mockito.when(todoService.findById(TEST_ID))
+        when(todoService.findById(TEST_ID))
                 .thenReturn(Optional.of(expectedTodoResponse));
 
         final String expectedResponse = objectMapper.writeValueAsString(expectedTodoResponse);
@@ -161,11 +160,13 @@ class TodoControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/todo/" + TEST_ID))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(expectedResponse));
+
+        verify(todoService).findById(TEST_ID);
     }
 
     @Test
     void shouldFindAll() throws Exception {
-        List<? extends ResponseTodoDto> expectedList = List.of(
+        List<ResponseTodoDto> expectedList = List.of(
                 ImmutableResponseTodoDto.builder()
                         .id(TEST_ID)
                         .title(TEST_TITLE)
@@ -180,13 +181,15 @@ class TodoControllerTest {
                         .build()
         );
 
-        Mockito.<List<? extends ResponseTodoDto>>when(todoService.findAll()).thenReturn(expectedList);
+        when(todoService.findAll()).thenReturn(expectedList);
 
         final String expectedResponse = objectMapper.writeValueAsString(expectedList);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/todo"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(expectedResponse));
+
+        verify(todoService).findAll();
     }
 
     @Test
@@ -194,7 +197,7 @@ class TodoControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/todo/" + TEST_ID))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
-        Mockito.verify(todoService, times(1)).delete(TEST_ID);
+        verify(todoService, times(1)).delete(TEST_ID);
     }
 
 }

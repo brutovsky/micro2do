@@ -2,16 +2,42 @@ package com.brtvsk.todoservice;
 
 import com.brtvsk.todoservice.model.dto.*;
 import com.brtvsk.todoservice.model.entity.Todo;
+import com.brtvsk.todoservice.utils.OptionalMapper;
 import com.brtvsk.todoservice.utils.TodoMapper;
+import com.brtvsk.todoservice.utils.TodoMapperImpl;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static com.brtvsk.todoservice.TodoTestUtils.*;
+import static com.brtvsk.todoservice.TodoTestUtils.IS_DONE;
+import static com.brtvsk.todoservice.TodoTestUtils.TEST_COMPLETION_TIME;
+import static com.brtvsk.todoservice.TodoTestUtils.TEST_CREATION_TIME;
+import static com.brtvsk.todoservice.TodoTestUtils.TEST_DESCRIPTION;
+import static com.brtvsk.todoservice.TodoTestUtils.TEST_ID;
+import static com.brtvsk.todoservice.TodoTestUtils.TEST_TAGS;
+import static com.brtvsk.todoservice.TodoTestUtils.TEST_TITLE;
+import static com.brtvsk.todoservice.TodoTestUtils.createTestTodo;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TodoMapperTest {
+@ContextConfiguration(classes = TodoMapperTest.TodoMapperTestConfig.class)
+@ExtendWith(SpringExtension.class)
+@SpringBootTest
+public class TodoMapperTest {
+
+    @Configuration
+    @ComponentScan(basePackageClasses = {OptionalMapper.class, TodoMapperImpl.class})
+    public static class TodoMapperTestConfig {
+    }
 
     private Todo todo;
-    private final TodoMapper mapper = TodoMapper.INSTANCE;
+
+    @Autowired
+    private TodoMapper mapper;
 
     @Test
     void shouldMapRequestTodoDto() {

@@ -1,7 +1,7 @@
 version: "3.7"
 services:
   todo-service-database:
-    image: mongo:latest
+    image: mongo:5.0
     container_name: "todo-service-database"
     expose:
       - 27017
@@ -17,7 +17,7 @@ services:
     ports:
       - "8081:8080"
     restart: always
-    links:
+    depends_on:
       - todo-service-database
 
 volumes:

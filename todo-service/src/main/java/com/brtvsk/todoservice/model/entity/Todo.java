@@ -57,7 +57,11 @@ public class Todo {
     }
 
     public Set<String> getTags() {
-        return tags;
+        if (tags == null) {
+            return null;
+        } else {
+            return Set.copyOf(tags);
+        }
     }
 
     public void setTags(final Set<String> tags) {

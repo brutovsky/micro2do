@@ -19,44 +19,46 @@ import java.util.UUID;
 @Service
 public class TodoServiceImpl implements TodoService {
 
+    private final TodoMapper todoMapper;
     private final TodoRepository todoRepository;
 
-    public TodoServiceImpl(final TodoRepository todoRepository) {
+    public TodoServiceImpl(final TodoMapper todoMapper, final TodoRepository todoRepository) {
+        this.todoMapper = todoMapper;
         this.todoRepository = todoRepository;
     }
 
     @Override
     public ResponseTodoDto create(final RequestTodoDto dto) {
-        Todo todo = TodoMapper.INSTANCE.fromRequestTodoDto(dto);
+        Todo todo = todoMapper.fromRequestTodoDto(dto);
         todo.setId(UUID.randomUUID());
         todo.setCreationTime(dto.getCreationTime().orElse(Date.from(Instant.now())));
         todo.setDone(dto.getDone().orElse(Boolean.FALSE));
         todo = todoRepository.save(todo);
-        return TodoMapper.INSTANCE.toResponseTodoDto(todo);
+        return todoMapper.toResponseTodoDto(todo);
     }
 
     @Override
     public Optional<ResponseTodoDto> findById(final UUID id) {
-        return todoRepository.findById(id).map(TodoMapper.INSTANCE::toResponseTodoDto);
+        return todoRepository.findById(id).map(todoMapper::toResponseTodoDto);
     }
 
     @Override
     public List<ResponseTodoDto> findAll() {
-        return todoRepository.findAll().stream().map(TodoMapper.INSTANCE::toResponseTodoDto).toList();
+        return todoRepository.findAll().stream().map(todoMapper::toResponseTodoDto).toList();
     }
 
     @Override
     public List<ResponseTodoDto> findAllDone(boolean done) {
-        return todoRepository.findAllDone(done).stream().map(TodoMapper.INSTANCE::toResponseTodoDto).toList();
+        return todoRepository.findAllDone(done).stream().map(todoMapper::toResponseTodoDto).toList();
     }
 
     @Override
     public ResponseTodoDto replace(final UUID id, final RequestTodoDto dto) {
         todoRepository.findById(id)
                 .orElseThrow(() -> new TodoNotFoundException(id.toString()));
-        Todo todo = TodoMapper.INSTANCE.fromRequestTodoDto(dto);
+        Todo todo = todoMapper.fromRequestTodoDto(dto);
         todo.setId(id);
-        return TodoMapper.INSTANCE.toResponseTodoDto(todoRepository.save(todo));
+        return todoMapper.toResponseTodoDto(todoRepository.save(todo));
     }
 
     @Override
@@ -71,7 +73,7 @@ public class TodoServiceImpl implements TodoService {
         todo.setCreationTime(dto.getCreationTime().orElse(todo.getCreationTime()));
         todo.setCompletionTime(dto.getCompletionTime().orElse(todo.getCompletionTime()));
 
-        return TodoMapper.INSTANCE.toResponseTodoDto(todoRepository.save(todo));
+        return todoMapper.toResponseTodoDto(todoRepository.save(todo));
     }
 
     @Override

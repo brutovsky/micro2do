@@ -1,7 +1,13 @@
 package com.brtvsk.todoservice;
 
 import com.brtvsk.todoservice.controller.TodoController;
-import com.brtvsk.todoservice.model.dto.*;
+import com.brtvsk.todoservice.i18n.Translator;
+import com.brtvsk.todoservice.model.dto.ImmutableOptionalRequestTodoDto;
+import com.brtvsk.todoservice.model.dto.ImmutableRequestTodoDto;
+import com.brtvsk.todoservice.model.dto.ImmutableResponseTodoDto;
+import com.brtvsk.todoservice.model.dto.OptionalRequestTodoDto;
+import com.brtvsk.todoservice.model.dto.RequestTodoDto;
+import com.brtvsk.todoservice.model.dto.ResponseTodoDto;
 import com.brtvsk.todoservice.service.TodoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -17,9 +23,17 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.brtvsk.todoservice.TodoTestUtils.*;
+import static com.brtvsk.todoservice.TodoTestUtils.IS_DONE;
+import static com.brtvsk.todoservice.TodoTestUtils.TEST_COMPLETION_TIME;
+import static com.brtvsk.todoservice.TodoTestUtils.TEST_CREATION_TIME;
+import static com.brtvsk.todoservice.TodoTestUtils.TEST_DESCRIPTION;
+import static com.brtvsk.todoservice.TodoTestUtils.TEST_ID;
+import static com.brtvsk.todoservice.TodoTestUtils.TEST_TAGS;
+import static com.brtvsk.todoservice.TodoTestUtils.TEST_TITLE;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @WebMvcTest(TodoController.class)
 class TodoControllerTest {
@@ -31,7 +45,12 @@ class TodoControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
+    private Translator translator;
+
+    @MockBean
     private TodoService todoService;
+
+    private static final String BASE_PATH = "/api/v1/todo/";
 
     @Test
     void shouldCreateTodo() throws Exception {
@@ -58,7 +77,7 @@ class TodoControllerTest {
         final String expectedResponse = objectMapper.writeValueAsString(expectedTodoResponse);
 
         mockMvc.perform(
-                        MockMvcRequestBuilders.post("/api/todo")
+                        MockMvcRequestBuilders.post(BASE_PATH)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(jsonRequest)
                 )
@@ -94,7 +113,7 @@ class TodoControllerTest {
         final String expectedResponse = objectMapper.writeValueAsString(expectedTodoResponse);
 
         mockMvc.perform(
-                        MockMvcRequestBuilders.put("/api/todo/" + TEST_ID)
+                        MockMvcRequestBuilders.put(BASE_PATH + TEST_ID)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(jsonRequest)
                 )
@@ -130,7 +149,7 @@ class TodoControllerTest {
         final String expectedResponse = objectMapper.writeValueAsString(expectedTodoResponse);
 
         mockMvc.perform(
-                        MockMvcRequestBuilders.patch("/api/todo/" + TEST_ID)
+                        MockMvcRequestBuilders.patch(BASE_PATH + TEST_ID)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(jsonRequest)
                 )
@@ -157,7 +176,7 @@ class TodoControllerTest {
 
         final String expectedResponse = objectMapper.writeValueAsString(expectedTodoResponse);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/todo/" + TEST_ID))
+        mockMvc.perform(MockMvcRequestBuilders.get(BASE_PATH + TEST_ID))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(expectedResponse));
 
@@ -185,7 +204,7 @@ class TodoControllerTest {
 
         final String expectedResponse = objectMapper.writeValueAsString(expectedList);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/todo"))
+        mockMvc.perform(MockMvcRequestBuilders.get(BASE_PATH))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(expectedResponse));
 
@@ -194,7 +213,7 @@ class TodoControllerTest {
 
     @Test
     void shouldDeleteTodo() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/todo/" + TEST_ID))
+        mockMvc.perform(MockMvcRequestBuilders.delete(BASE_PATH + TEST_ID))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
         verify(todoService, times(1)).delete(TEST_ID);

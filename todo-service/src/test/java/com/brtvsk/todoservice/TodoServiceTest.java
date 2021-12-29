@@ -1,11 +1,17 @@
 package com.brtvsk.todoservice;
 
 import com.brtvsk.todoservice.exception.TodoNotFoundException;
-import com.brtvsk.todoservice.model.dto.*;
+import com.brtvsk.todoservice.model.dto.ImmutableOptionalRequestTodoDto;
+import com.brtvsk.todoservice.model.dto.ImmutableRequestTodoDto;
+import com.brtvsk.todoservice.model.dto.ImmutableResponseTodoDto;
+import com.brtvsk.todoservice.model.dto.OptionalRequestTodoDto;
+import com.brtvsk.todoservice.model.dto.RequestTodoDto;
+import com.brtvsk.todoservice.model.dto.ResponseTodoDto;
 import com.brtvsk.todoservice.model.entity.Todo;
 import com.brtvsk.todoservice.repository.TodoRepository;
 import com.brtvsk.todoservice.service.TodoService;
 import com.brtvsk.todoservice.service.TodoServiceImpl;
+import com.brtvsk.todoservice.utils.TodoMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -14,7 +20,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.brtvsk.todoservice.TodoTestUtils.*;
+import static com.brtvsk.todoservice.TodoTestUtils.IS_DONE;
+import static com.brtvsk.todoservice.TodoTestUtils.TEST_CREATION_TIME;
+import static com.brtvsk.todoservice.TodoTestUtils.TEST_DESCRIPTION;
+import static com.brtvsk.todoservice.TodoTestUtils.TEST_ID;
+import static com.brtvsk.todoservice.TodoTestUtils.TEST_TAGS;
+import static com.brtvsk.todoservice.TodoTestUtils.TEST_TITLE;
+import static com.brtvsk.todoservice.TodoTestUtils.createTestTodo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -24,14 +36,15 @@ import static org.mockito.Mockito.verify;
 class TodoServiceTest {
 
     private final TodoRepository repository = Mockito.mock(TodoRepository.class);
-    private final TodoService service = new TodoServiceImpl(repository);
+    private final TodoMapper mapper = Mockito.mock(TodoMapper.class);
+    private final TodoService service = new TodoServiceImpl(mapper, repository);
 
     private RequestTodoDto todoCreationDto;
     private Todo expectedTodo;
     private ResponseTodoDto expectedTodoDto;
 
     @BeforeEach
-    public void init() {
+    void init() {
         todoCreationDto = ImmutableRequestTodoDto.builder()
                 .title(TEST_TITLE)
                 .description(TEST_DESCRIPTION)
@@ -39,6 +52,8 @@ class TodoServiceTest {
                 .build();
 
         expectedTodo = createTestTodo();
+
+        Mockito.when(mapper.fromRequestTodoDto(any(RequestTodoDto.class))).thenReturn(expectedTodo);
 
         expectedTodoDto = ImmutableResponseTodoDto
                 .builder()
@@ -49,10 +64,12 @@ class TodoServiceTest {
                 .tags(TEST_TAGS)
                 .creationTime(TEST_CREATION_TIME)
                 .build();
+
+        Mockito.when(mapper.toResponseTodoDto(any(Todo.class))).thenReturn(expectedTodoDto);
     }
 
     @Test
-    public void shouldCreateTodo() {
+    void shouldCreateTodo() {
         Mockito.when(repository.save(any(Todo.class))).thenReturn(expectedTodo);
 
         ResponseTodoDto createdTodoDto = service.create(todoCreationDto);
@@ -66,7 +83,7 @@ class TodoServiceTest {
     }
 
     @Test
-    public void shouldUpdateTodo() {
+    void shouldUpdateTodo() {
         String changedDescription = "Changed Description";
         Todo expectedTodo2 = createTestTodo();
         expectedTodo2.setDescription(changedDescription);
@@ -75,6 +92,7 @@ class TodoServiceTest {
 
         Mockito.when(repository.findById(any(UUID.class))).thenReturn(Optional.of(expectedTodo));
         Mockito.when(repository.save(any(Todo.class))).thenReturn(expectedTodo2);
+        Mockito.when(mapper.toResponseTodoDto(any(Todo.class))).thenReturn(expectedTodoDto);
 
         OptionalRequestTodoDto requestDto = ImmutableOptionalRequestTodoDto.builder()
                 .description(changedDescription)
@@ -92,7 +110,7 @@ class TodoServiceTest {
     }
 
     @Test
-    public void shouldReplaceTodo() {
+    void shouldReplaceTodo() {
         Mockito.when(repository.save(any(Todo.class))).thenReturn(expectedTodo);
         Mockito.when(repository.findById(any(UUID.class))).thenReturn(Optional.of(expectedTodo));
 
@@ -104,6 +122,8 @@ class TodoServiceTest {
         todoCreationDto = ImmutableRequestTodoDto.copyOf(todoCreationDto).withTitle(changedTitle);
         expectedTodoDto = ImmutableResponseTodoDto.copyOf(expectedTodoDto).withTitle(changedTitle);
 
+        Mockito.when(mapper.toResponseTodoDto(any(Todo.class))).thenReturn(expectedTodoDto);
+
         ResponseTodoDto replacedTodo = service.replace(createdTodo.getId(), todoCreationDto);
 
         verify(repository, times(2)).save(any(Todo.class));
@@ -113,7 +133,7 @@ class TodoServiceTest {
     }
 
     @Test
-    public void shouldFindTodo() {
+    void shouldFindTodo() {
         Mockito.when(repository.findById(TEST_ID)).thenReturn(Optional.of(expectedTodo));
 
         Optional<ResponseTodoDto> optionalTodo = service.findById(TEST_ID);
@@ -131,7 +151,7 @@ class TodoServiceTest {
     }
 
     @Test
-    public void shouldFindAll() {
+    void shouldFindAll() {
         List<Todo> testList = List.of(
                 createTestTodo(),
                 createTestTodo(),
@@ -145,7 +165,7 @@ class TodoServiceTest {
     }
 
     @Test
-    public void shouldFindAllDone() {
+    void shouldFindAllDone() {
         List<Todo> testList = List.of(
                 createTestTodo(),
                 createTestTodo(),
@@ -159,14 +179,15 @@ class TodoServiceTest {
     }
 
     @Test
-    public void shouldDeleteTodo() {
+    void shouldDeleteTodo() {
         service.delete(TEST_ID);
         verify(repository, times(1)).deleteById(TEST_ID);
     }
 
     @Test
-    public void shouldThrowTodoNotFoundException() {
-        assertThrows(TodoNotFoundException.class, () -> service.replace(UUID.randomUUID(), todoCreationDto));
+    void shouldThrowTodoNotFoundException() {
+        UUID id = UUID.randomUUID();
+        assertThrows(TodoNotFoundException.class, () -> service.replace(id, todoCreationDto));
     }
 
 }

@@ -29,7 +29,7 @@ class MongoDBContainerIT {
     private TodoRepository todoRepository;
 
     @Container
-    private static final MongoDBContainer MONGO_DB_CONTAINER = new MongoDBContainer("mongo:4.4.2");
+    private static final MongoDBContainer MONGO_DB_CONTAINER = new MongoDBContainer("mongo:5.0");
 
     @DynamicPropertySource
     static void setProperties(DynamicPropertyRegistry registry) {
@@ -42,12 +42,12 @@ class MongoDBContainerIT {
     }
 
     @Test
-    public void containerIsUp() {
+    void containerIsUp() {
         assertTrue(MONGO_DB_CONTAINER.isRunning());
     }
 
     @Test
-    public void repositoryIsNotNull() {
+    void repositoryIsNotNull() {
         assertThat(this.mongoTemplate).isNotNull();
         assertThat(this.todoRepository).isNotNull();
     }

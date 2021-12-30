@@ -5,6 +5,7 @@ import com.brtvsk.todoservice.model.dto.ImmutableTodoRequest;
 import com.brtvsk.todoservice.model.dto.UpdateTodoRequest;
 import com.brtvsk.todoservice.model.dto.TodoRequest;
 import com.brtvsk.todoservice.model.dto.TodoResponse;
+import com.brtvsk.todoservice.utils.RestMessage;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
@@ -27,6 +28,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import static com.brtvsk.todoservice.TodoTestUtils.IS_DONE;
 import static com.brtvsk.todoservice.TodoTestUtils.TEST_DESCRIPTION;
@@ -257,6 +259,24 @@ class TodoControllerIT {
                 .thenReturn();
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
+    }
+
+    @Test
+    void shouldThrowTodoNotFoundException() {
+        UUID id = UUID.randomUUID();
+
+        var response = RestAssured.given()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .get("/" + id)
+                .thenReturn();
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
+
+        var restMessage = response.as(RestMessage.class);
+
+        assertThat(restMessage.getMessages()).isNotEmpty();
+        assertThat(restMessage.getMessages().get(0)).contains(id.toString());
     }
 
     static class MongoDbInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {

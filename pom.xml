@@ -60,7 +60,9 @@
                 <configuration>
                     <excludes>
                         <exclude>com/brtvsk/todoservice/config/**/*</exclude>
+                        <exclude>com/brtvsk/todoservice/model/**/*</exclude>
                         <exclude>**/*Config.*</exclude>
+                        <exclude>**/TodoServiceApplication.*</exclude>
                     </excludes>
                 </configuration>
                 <executions>

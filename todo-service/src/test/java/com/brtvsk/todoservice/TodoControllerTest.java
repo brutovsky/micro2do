@@ -1,6 +1,7 @@
 package com.brtvsk.todoservice;
 
 import com.brtvsk.todoservice.controller.TodoController;
+import com.brtvsk.todoservice.exception.TodoNotFoundException;
 import com.brtvsk.todoservice.i18n.Translator;
 import com.brtvsk.todoservice.model.dto.ImmutableUpdateTodoRequest;
 import com.brtvsk.todoservice.model.dto.ImmutableTodoRequest;
@@ -9,6 +10,7 @@ import com.brtvsk.todoservice.model.dto.UpdateTodoRequest;
 import com.brtvsk.todoservice.model.dto.TodoRequest;
 import com.brtvsk.todoservice.model.dto.TodoResponse;
 import com.brtvsk.todoservice.service.TodoService;
+import com.brtvsk.todoservice.utils.RestMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +37,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@WebMvcTest({TodoController.class, Translator.class})
+@WebMvcTest(TodoController.class)
 class TodoControllerTest {
 
     @Autowired
@@ -43,6 +45,9 @@ class TodoControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockBean
+    private Translator translator;
 
     @MockBean
     private TodoService todoService;
@@ -216,6 +221,27 @@ class TodoControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
         verify(todoService, times(1)).delete(TEST_ID);
+    }
+
+    @Test
+    void shouldThrowTodoNotFoundException() throws Exception {
+        String msg = TEST_ID.toString();
+
+        TodoNotFoundException ex = new TodoNotFoundException(msg);
+        RestMessage restMessage = new RestMessage(msg);
+
+        final String expectedResponse = objectMapper.writeValueAsString(restMessage);
+
+        when(todoService.findById(TEST_ID))
+                .thenReturn(Optional.empty());
+        when(translator.toLocale(ex.getMessage(), List.of(ex.getTodoId())))
+                .thenReturn(msg);
+
+        mockMvc.perform(MockMvcRequestBuilders.get(BASE_PATH + TEST_ID))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(MockMvcResultMatchers.content().json(expectedResponse));
+
+        verify(todoService).findById(TEST_ID);
     }
 
 }

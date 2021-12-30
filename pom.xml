@@ -60,7 +60,6 @@
                 <configuration>
                     <excludes>
                         <exclude>com/brtvsk/todoservice/config/**/*</exclude>
-                        <exclude>com/brtvsk/todoservice/migration/**/*</exclude>
                         <exclude>**/*Config.*</exclude>
                     </excludes>
                 </configuration>

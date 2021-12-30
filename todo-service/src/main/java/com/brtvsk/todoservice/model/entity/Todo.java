@@ -55,7 +55,6 @@ public class Todo {
     }
 
     public Set<String> getTags() {
-        System.out.println("WTF " + tags.toString());
         return Set.copyOf(tags);
     }
 

@@ -73,8 +73,6 @@ class TodoControllerTest {
         final String jsonRequest = objectMapper.writeValueAsString(todoCreationRequest);
         final String expectedResponse = objectMapper.writeValueAsString(expectedTodoResponse);
 
-        System.out.println("EEE " + jsonRequest);
-
         mockMvc.perform(
                         MockMvcRequestBuilders.post(BASE_PATH)
                                 .accept(MediaType.APPLICATION_JSON)

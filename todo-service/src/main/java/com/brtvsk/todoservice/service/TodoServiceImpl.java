@@ -33,9 +33,7 @@ public class TodoServiceImpl implements TodoService {
         todo.setId(UUID.randomUUID());
         todo.setCreationTime(dto.getCreationTime().orElseGet(() -> Date.from(Instant.now())));
         todo.setDone(dto.getDone().orElse(Boolean.FALSE));
-        System.out.println("Before save " + todo);
         todo = todoRepository.save(todo);
-        System.out.println("After save " + todo);
         return todoMapper.toTodoResponse(todo);
     }
 

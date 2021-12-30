@@ -18,9 +18,6 @@ public class Translator {
 
     public String toLocale(String msgCode, List<String> args) {
         Locale locale = LocaleContextHolder.getLocale();
-        System.out.println(locale);
-        var msg = messageSource.getMessage(msgCode, args.toArray(), locale);
-        System.out.println(msg);
-        return msg;
+        return messageSource.getMessage(msgCode, args.toArray(), locale);
     }
 }

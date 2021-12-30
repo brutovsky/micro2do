@@ -4,6 +4,7 @@ import com.brtvsk.todoservice.model.entity.Todo;
 import com.brtvsk.todoservice.repository.TodoRepository;
 import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;
+import org.springframework.context.annotation.Profile;
 
 import java.time.Instant;
 import java.util.Date;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+@Profile("migrate")
 @ChangeLog
 public class MongoChangelog {
 

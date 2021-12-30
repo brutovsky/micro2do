@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.List;
@@ -15,6 +16,7 @@ public class MigrationConfig {
     @Value("${mongock.change-logs-scan-package}")
     private String scanPackage;
 
+    @Profile("migrate")
     @Bean
     public MongockSpring5.MongockApplicationRunner mongockApplicationRunnerBean(ApplicationContext springContext, MongoTemplate mongoTemplate) {
         return MongockSpring5.builder()

@@ -154,6 +154,12 @@
     </dependencyManagement>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -183,5 +189,23 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <spring.profiles.active>default</spring.profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>migrate</id>
+            <properties>
+                <spring.profiles.active>migrate</spring.profiles.active>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>

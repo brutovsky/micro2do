@@ -31,7 +31,7 @@ public class TodoServiceImpl implements TodoService {
     public ResponseTodoDto create(final RequestTodoDto dto) {
         Todo todo = todoMapper.fromRequestTodoDto(dto);
         todo.setId(UUID.randomUUID());
-        todo.setCreationTime(dto.getCreationTime().orElse(Date.from(Instant.now())));
+        todo.setCreationTime(dto.getCreationTime().orElseGet(() -> Date.from(Instant.now())));
         todo.setDone(dto.getDone().orElse(Boolean.FALSE));
         todo = todoRepository.save(todo);
         return todoMapper.toResponseTodoDto(todo);

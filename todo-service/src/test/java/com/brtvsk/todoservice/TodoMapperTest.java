@@ -1,6 +1,10 @@
 package com.brtvsk.todoservice;
 
-import com.brtvsk.todoservice.model.dto.*;
+import com.brtvsk.todoservice.model.dto.ImmutableOptionalRequestTodoDto;
+import com.brtvsk.todoservice.model.dto.ImmutableRequestTodoDto;
+import com.brtvsk.todoservice.model.dto.OptionalRequestTodoDto;
+import com.brtvsk.todoservice.model.dto.RequestTodoDto;
+import com.brtvsk.todoservice.model.dto.ResponseTodoDto;
 import com.brtvsk.todoservice.model.entity.Todo;
 import com.brtvsk.todoservice.utils.OptionalMapper;
 import com.brtvsk.todoservice.utils.TodoMapper;
@@ -27,17 +31,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ContextConfiguration(classes = TodoMapperTest.TodoMapperTestConfig.class)
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class TodoMapperTest {
+class TodoMapperTest {
+    private Todo todo;
+
+    @Autowired
+    private TodoMapper mapper;
 
     @Configuration
     @ComponentScan(basePackageClasses = {OptionalMapper.class, TodoMapperImpl.class})
     public static class TodoMapperTestConfig {
     }
-
-    private Todo todo;
-
-    @Autowired
-    private TodoMapper mapper;
 
     @Test
     void shouldMapRequestTodoDto() {

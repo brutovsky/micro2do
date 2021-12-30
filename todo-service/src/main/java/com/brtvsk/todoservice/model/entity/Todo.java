@@ -21,9 +21,6 @@ public class Todo {
     private Date creationTime;
     private Date completionTime;
 
-    public Todo() {
-    }
-
     public UUID getId() {
         return id;
     }
@@ -58,7 +55,7 @@ public class Todo {
 
     public Set<String> getTags() {
         if (tags == null) {
-            return null;
+            return Set.of();
         } else {
             return Set.copyOf(tags);
         }

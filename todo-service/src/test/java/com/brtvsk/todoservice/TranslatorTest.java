@@ -2,6 +2,7 @@ package com.brtvsk.todoservice;
 
 import com.brtvsk.todoservice.i18n.Translator;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockitoAnnotations;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class TranslatorTest {
         List<String> testArgs = List.of("mockId");
         String mockMsg = "mock";
 
+        MockitoAnnotations.openMocks(this);
         when(invokeMethod(resourceBundleMessageSource, "getMessageInternal", anyString(), any(Object[].class), any(Locale.class)))
                 .thenReturn(mockMsg);
 

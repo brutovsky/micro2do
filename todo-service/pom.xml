@@ -9,18 +9,6 @@
     <packaging>jar</packaging>
     <name>todo-service</name>
 
-    <properties>
-        <modelmapper.version>2.4.5</modelmapper.version>
-        <openapi.version>1.6.2</openapi.version>
-        <immutables.version>2.8.2</immutables.version>
-        <org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
-        <testcontainer.version>1.16.2</testcontainer.version>
-        <mongodb-springdata-v3-driver>4.3.8</mongodb-springdata-v3-driver>
-        <junit.jupiter.version>5.8.2</junit.jupiter.version>
-        <spring.test.version>5.3.14</spring.test.version>
-        <hamcrest.version>2.2</hamcrest.version>
-    </properties>
-
     <parent>
         <artifactId>micro2do</artifactId>
         <groupId>com.brtvsk</groupId>
@@ -28,6 +16,23 @@
     </parent>
 
     <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
@@ -41,61 +46,52 @@
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
-            <version>${org.mapstruct.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
-            <version>${openapi.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>${testcontainer.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>mongodb</artifactId>
-            <version>${testcontainer.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
-            <version>${testcontainer.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit.jupiter.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit.jupiter.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <version>${spring.test.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-library</artifactId>
-            <version>${hamcrest.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -114,7 +110,6 @@
         <dependency>
             <groupId>org.immutables</groupId>
             <artifactId>value</artifactId>
-            <version>${org.immutables.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

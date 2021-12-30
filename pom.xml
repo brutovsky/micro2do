@@ -31,6 +31,12 @@
         <skipTests>false</skipTests>
         <skipUnitTests>${skipTests}</skipUnitTests>
         <skipIntegrationTests>${skipTests}</skipIntegrationTests>
+        <sonar.coverage.exclusions>
+            com/brtvsk/todoservice/config/**/*,
+            com/brtvsk/todoservice/model/**/*,
+            **/*Config.*,
+            **/*ServiceApplication.*
+        </sonar.coverage.exclusions>
     </properties>
 
     <dependencies>

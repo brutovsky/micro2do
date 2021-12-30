@@ -16,7 +16,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
 
-public class TodoRepositoryTest {
+class TodoRepositoryTest {
 
     private final MongoTemplate mongoTemplate = mock(MongoTemplate.class);
     private final TodoRepository repository = new TodoRepositoryImpl(mongoTemplate);

@@ -3,15 +3,15 @@ package com.brtvsk.todoservice.exception;
 import com.brtvsk.todoservice.i18n.Translator;
 import com.brtvsk.todoservice.utils.RestMessage;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@ControllerAdvice
-class RestControllerAdvice {
+@RestControllerAdvice
+public class TodoControllerAdvice {
 
     private final Translator i18n;
 
-    RestControllerAdvice(Translator i18n) {
+    TodoControllerAdvice(Translator i18n) {
         this.i18n = i18n;
     }
 

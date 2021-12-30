@@ -1,10 +1,10 @@
 package com.brtvsk.todoservice;
 
-import com.brtvsk.todoservice.model.dto.ImmutableOptionalRequestTodoDto;
-import com.brtvsk.todoservice.model.dto.ImmutableRequestTodoDto;
-import com.brtvsk.todoservice.model.dto.OptionalRequestTodoDto;
-import com.brtvsk.todoservice.model.dto.RequestTodoDto;
-import com.brtvsk.todoservice.model.dto.ResponseTodoDto;
+import com.brtvsk.todoservice.model.dto.ImmutableUpdateTodoRequest;
+import com.brtvsk.todoservice.model.dto.ImmutableTodoRequest;
+import com.brtvsk.todoservice.model.dto.UpdateTodoRequest;
+import com.brtvsk.todoservice.model.dto.TodoRequest;
+import com.brtvsk.todoservice.model.dto.TodoResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
@@ -28,7 +28,10 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 
-import static com.brtvsk.todoservice.TodoTestUtils.*;
+import static com.brtvsk.todoservice.TodoTestUtils.IS_DONE;
+import static com.brtvsk.todoservice.TodoTestUtils.TEST_DESCRIPTION;
+import static com.brtvsk.todoservice.TodoTestUtils.TEST_TAGS;
+import static com.brtvsk.todoservice.TodoTestUtils.TEST_TITLE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -55,7 +58,7 @@ class TodoControllerIT {
 
     @Test
     void shouldPostTodo() throws Exception {
-        RequestTodoDto todoCreationRequest = ImmutableRequestTodoDto.builder()
+        TodoRequest todoCreationRequest = ImmutableTodoRequest.builder()
                 .title(TEST_TITLE)
                 .description(TEST_DESCRIPTION)
                 .tags(TEST_TAGS)
@@ -63,42 +66,42 @@ class TodoControllerIT {
 
         final String jsonRequest = objectMapper.writeValueAsString(todoCreationRequest);
 
-        ResponseTodoDto response = RestAssured.given()
+        TodoResponse response = RestAssured.given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(jsonRequest)
                 .when()
                 .post()
-                .as(ResponseTodoDto.class);
+                .as(TodoResponse.class);
 
         assertThat(response.getId()).isNotNull();
         assertThat(response.getCreationTime()).isNotNull();
         assertThat(response.getTitle()).isEqualTo(TEST_TITLE);
         assertThat(response.getDescription()).contains(TEST_DESCRIPTION);
         assertThat(response.getDone()).isEqualTo(IS_DONE);
-        assertThat(response.getTags()).contains(TEST_TAGS);
+        assertThat(response.getTags()).containsAll(TEST_TAGS);
         assertThat(response.getCompletionTime()).isNotPresent();
     }
 
     @Test
     void shouldGetAllTodo() throws JsonProcessingException {
-        RequestTodoDto todoCreationRequest = ImmutableRequestTodoDto.builder()
+        TodoRequest todoCreationRequest = ImmutableTodoRequest.builder()
                 .title(TEST_TITLE)
                 .build();
 
         final String jsonRequest = objectMapper.writeValueAsString(todoCreationRequest);
 
-        ResponseTodoDto postResponse = RestAssured.given()
+        TodoResponse postResponse = RestAssured.given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(jsonRequest)
                 .when()
                 .post()
-                .as(ResponseTodoDto.class);
+                .as(TodoResponse.class);
 
         var getResponse = List.of(RestAssured.given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
                 .get()
-                .as(ResponseTodoDto[].class));
+                .as(TodoResponse[].class));
 
         assertThat(getResponse)
                 .hasSizeGreaterThan(1)
@@ -107,7 +110,7 @@ class TodoControllerIT {
 
     @Test
     void shouldGetTodo() throws JsonProcessingException {
-        RequestTodoDto todoCreationRequest = ImmutableRequestTodoDto.builder()
+        TodoRequest todoCreationRequest = ImmutableTodoRequest.builder()
                 .title(TEST_TITLE)
                 .description(TEST_DESCRIPTION)
                 .tags(TEST_TAGS)
@@ -115,24 +118,24 @@ class TodoControllerIT {
 
         final String jsonRequest = objectMapper.writeValueAsString(todoCreationRequest);
 
-        ResponseTodoDto postResponse = RestAssured.given()
+        TodoResponse postResponse = RestAssured.given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(jsonRequest)
                 .when()
                 .post()
-                .as(ResponseTodoDto.class);
+                .as(TodoResponse.class);
 
         var getResponse = RestAssured.given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
                 .get("/" + postResponse.getId())
-                .as(ResponseTodoDto.class);
+                .as(TodoResponse.class);
 
         assertThat(getResponse.getId()).isEqualTo(postResponse.getId());
         assertThat(getResponse.getTitle()).isEqualTo(TEST_TITLE);
         assertThat(getResponse.getDescription()).contains(TEST_DESCRIPTION);
         assertThat(getResponse.getDone()).isEqualTo(IS_DONE);
-        assertThat(getResponse.getTags()).contains(TEST_TAGS);
+        assertThat(getResponse.getTags()).containsAll(TEST_TAGS);
     }
 
     @Test
@@ -140,12 +143,12 @@ class TodoControllerIT {
         String changedTitle = "Changed title";
         String changedDescription = "Changed description";
 
-        RequestTodoDto todoCreationRequest = ImmutableRequestTodoDto.builder()
+        TodoRequest todoCreationRequest = ImmutableTodoRequest.builder()
                 .title(TEST_TITLE)
                 .description(TEST_DESCRIPTION)
                 .build();
 
-        OptionalRequestTodoDto todoUpdateRequest = ImmutableOptionalRequestTodoDto.builder()
+        UpdateTodoRequest todoUpdateRequest = ImmutableUpdateTodoRequest.builder()
                 .title(changedTitle)
                 .description(changedDescription)
                 .build();
@@ -153,19 +156,19 @@ class TodoControllerIT {
         final String jsonPostRequest = objectMapper.writeValueAsString(todoCreationRequest);
         final String jsonPatchRequest = objectMapper.writeValueAsString(todoUpdateRequest);
 
-        ResponseTodoDto postResponse = RestAssured.given()
+        TodoResponse postResponse = RestAssured.given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(jsonPostRequest)
                 .when()
                 .post()
-                .as(ResponseTodoDto.class);
+                .as(TodoResponse.class);
 
         var updateResponse = RestAssured.given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(jsonPatchRequest)
                 .when()
                 .patch("/" + postResponse.getId())
-                .as(ResponseTodoDto.class);
+                .as(TodoResponse.class);
 
         assertThat(updateResponse.getId()).isEqualTo(postResponse.getId());
         assertThat(updateResponse.getTitle()).isEqualTo(changedTitle);
@@ -183,12 +186,12 @@ class TodoControllerIT {
         Date changedCreationTime = Date.from(Instant.now());
         Date changedCompletionTime = Date.from(changedCreationTime.toInstant().plus(1, ChronoUnit.HOURS));
 
-        RequestTodoDto todoCreationRequest = ImmutableRequestTodoDto.builder()
+        TodoRequest todoCreationRequest = ImmutableTodoRequest.builder()
                 .title(TEST_TITLE)
                 .description(TEST_DESCRIPTION)
                 .build();
 
-        RequestTodoDto todoReplaceRequest = ImmutableRequestTodoDto.builder()
+        TodoRequest todoReplaceRequest = ImmutableTodoRequest.builder()
                 .title(changedTitle)
                 .description(changedDescription)
                 .done(Boolean.TRUE)
@@ -199,19 +202,19 @@ class TodoControllerIT {
         final String jsonPostRequest = objectMapper.writeValueAsString(todoCreationRequest);
         final String jsonPutRequest = objectMapper.writeValueAsString(todoReplaceRequest);
 
-        ResponseTodoDto postResponse = RestAssured.given()
+        TodoResponse postResponse = RestAssured.given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(jsonPostRequest)
                 .when()
                 .post()
-                .as(ResponseTodoDto.class);
+                .as(TodoResponse.class);
 
         var updateResponse = RestAssured.given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(jsonPutRequest)
                 .when()
                 .put("/" + postResponse.getId())
-                .as(ResponseTodoDto.class);
+                .as(TodoResponse.class);
 
         assertThat(updateResponse.getId()).isEqualTo(postResponse.getId());
         assertThat(updateResponse.getTitle()).isEqualTo(changedTitle);
@@ -223,19 +226,19 @@ class TodoControllerIT {
 
     @Test
     void shouldDeleteTodo() throws JsonProcessingException {
-        RequestTodoDto todoCreationRequest = ImmutableRequestTodoDto.builder()
+        TodoRequest todoCreationRequest = ImmutableTodoRequest.builder()
                 .title(TEST_TITLE)
                 .description(TEST_DESCRIPTION)
                 .build();
 
         final String jsonPostRequest = objectMapper.writeValueAsString(todoCreationRequest);
 
-        ResponseTodoDto postResponse = RestAssured.given()
+        TodoResponse postResponse = RestAssured.given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(jsonPostRequest)
                 .when()
                 .post()
-                .as(ResponseTodoDto.class);
+                .as(TodoResponse.class);
 
         Response response = RestAssured.given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)

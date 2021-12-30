@@ -2,9 +2,9 @@ package com.brtvsk.todoservice.service;
 
 import com.brtvsk.todoservice.exception.TodoNotFoundException;
 
-import com.brtvsk.todoservice.model.dto.OptionalRequestTodoDto;
-import com.brtvsk.todoservice.model.dto.RequestTodoDto;
-import com.brtvsk.todoservice.model.dto.ResponseTodoDto;
+import com.brtvsk.todoservice.model.dto.UpdateTodoRequest;
+import com.brtvsk.todoservice.model.dto.TodoRequest;
+import com.brtvsk.todoservice.model.dto.TodoResponse;
 import com.brtvsk.todoservice.model.entity.Todo;
 import com.brtvsk.todoservice.repository.TodoRepository;
 import com.brtvsk.todoservice.utils.TodoMapper;
@@ -28,41 +28,44 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public ResponseTodoDto create(final RequestTodoDto dto) {
-        Todo todo = todoMapper.fromRequestTodoDto(dto);
+    public TodoResponse create(final TodoRequest dto) {
+        Todo todo = todoMapper.fromTodoRequest(dto);
         todo.setId(UUID.randomUUID());
         todo.setCreationTime(dto.getCreationTime().orElseGet(() -> Date.from(Instant.now())));
         todo.setDone(dto.getDone().orElse(Boolean.FALSE));
+        System.out.println("Before save " + todo);
         todo = todoRepository.save(todo);
-        return todoMapper.toResponseTodoDto(todo);
+        System.out.println("After save " + todo);
+        return todoMapper.toTodoResponse(todo);
     }
 
     @Override
-    public Optional<ResponseTodoDto> findById(final UUID id) {
-        return todoRepository.findById(id).map(todoMapper::toResponseTodoDto);
+    public Optional<TodoResponse> findById(final UUID id) {
+        return todoRepository.findById(id).map(todoMapper::toTodoResponse);
     }
 
     @Override
-    public List<ResponseTodoDto> findAll() {
-        return todoRepository.findAll().stream().map(todoMapper::toResponseTodoDto).toList();
+    public List<TodoResponse> findAll() {
+        return todoRepository.findAll().stream().map(todoMapper::toTodoResponse).toList();
     }
 
     @Override
-    public List<ResponseTodoDto> findAllDone(boolean done) {
-        return todoRepository.findAllDone(done).stream().map(todoMapper::toResponseTodoDto).toList();
+    public List<TodoResponse> findAllDone(boolean done) {
+        return todoRepository.findAllDone(done).stream().map(todoMapper::toTodoResponse).toList();
     }
 
     @Override
-    public ResponseTodoDto replace(final UUID id, final RequestTodoDto dto) {
-        todoRepository.findById(id)
-                .orElseThrow(() -> new TodoNotFoundException(id.toString()));
-        Todo todo = todoMapper.fromRequestTodoDto(dto);
+    public TodoResponse replace(final UUID id, final TodoRequest dto) {
+        if (todoRepository.findById(id).isEmpty()) {
+            throw new TodoNotFoundException(id.toString());
+        }
+        Todo todo = todoMapper.fromTodoRequest(dto);
         todo.setId(id);
-        return todoMapper.toResponseTodoDto(todoRepository.save(todo));
+        return todoMapper.toTodoResponse(todoRepository.save(todo));
     }
 
     @Override
-    public ResponseTodoDto update(final UUID id, final OptionalRequestTodoDto dto) {
+    public TodoResponse update(final UUID id, final UpdateTodoRequest dto) {
         Todo todo = todoRepository.findById(id)
                 .orElseThrow(() -> new TodoNotFoundException(id.toString()));
 
@@ -73,7 +76,7 @@ public class TodoServiceImpl implements TodoService {
         todo.setCreationTime(dto.getCreationTime().orElse(todo.getCreationTime()));
         todo.setCompletionTime(dto.getCompletionTime().orElse(todo.getCompletionTime()));
 
-        return todoMapper.toResponseTodoDto(todoRepository.save(todo));
+        return todoMapper.toTodoResponse(todoRepository.save(todo));
     }
 
     @Override

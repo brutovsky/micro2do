@@ -1,12 +1,12 @@
 package com.brtvsk.todoservice;
 
 import com.brtvsk.todoservice.exception.TodoNotFoundException;
-import com.brtvsk.todoservice.model.dto.ImmutableOptionalRequestTodoDto;
-import com.brtvsk.todoservice.model.dto.ImmutableRequestTodoDto;
-import com.brtvsk.todoservice.model.dto.ImmutableResponseTodoDto;
-import com.brtvsk.todoservice.model.dto.OptionalRequestTodoDto;
-import com.brtvsk.todoservice.model.dto.RequestTodoDto;
-import com.brtvsk.todoservice.model.dto.ResponseTodoDto;
+import com.brtvsk.todoservice.model.dto.ImmutableUpdateTodoRequest;
+import com.brtvsk.todoservice.model.dto.ImmutableTodoRequest;
+import com.brtvsk.todoservice.model.dto.ImmutableTodoResponse;
+import com.brtvsk.todoservice.model.dto.UpdateTodoRequest;
+import com.brtvsk.todoservice.model.dto.TodoRequest;
+import com.brtvsk.todoservice.model.dto.TodoResponse;
 import com.brtvsk.todoservice.model.entity.Todo;
 import com.brtvsk.todoservice.repository.TodoRepository;
 import com.brtvsk.todoservice.service.TodoService;
@@ -39,13 +39,13 @@ class TodoServiceTest {
     private final TodoMapper mapper = Mockito.mock(TodoMapper.class);
     private final TodoService service = new TodoServiceImpl(mapper, repository);
 
-    private RequestTodoDto todoCreationDto;
+    private TodoRequest todoCreationDto;
     private Todo expectedTodo;
-    private ResponseTodoDto expectedTodoDto;
+    private TodoResponse expectedTodoDto;
 
     @BeforeEach
     void init() {
-        todoCreationDto = ImmutableRequestTodoDto.builder()
+        todoCreationDto = ImmutableTodoRequest.builder()
                 .title(TEST_TITLE)
                 .description(TEST_DESCRIPTION)
                 .tags(TEST_TAGS)
@@ -53,9 +53,9 @@ class TodoServiceTest {
 
         expectedTodo = createTestTodo();
 
-        Mockito.when(mapper.fromRequestTodoDto(any(RequestTodoDto.class))).thenReturn(expectedTodo);
+        Mockito.when(mapper.fromTodoRequest(any(TodoRequest.class))).thenReturn(expectedTodo);
 
-        expectedTodoDto = ImmutableResponseTodoDto
+        expectedTodoDto = ImmutableTodoResponse
                 .builder()
                 .id(TEST_ID)
                 .title(TEST_TITLE)
@@ -65,20 +65,19 @@ class TodoServiceTest {
                 .creationTime(TEST_CREATION_TIME)
                 .build();
 
-        Mockito.when(mapper.toResponseTodoDto(any(Todo.class))).thenReturn(expectedTodoDto);
+        Mockito.when(mapper.toTodoResponse(any(Todo.class))).thenReturn(expectedTodoDto);
     }
 
     @Test
     void shouldCreateTodo() {
         Mockito.when(repository.save(any(Todo.class))).thenReturn(expectedTodo);
 
-        ResponseTodoDto createdTodoDto = service.create(todoCreationDto);
+        TodoResponse createdTodoDto = service.create(todoCreationDto);
 
         assertThat(createdTodoDto.getId()).isEqualTo(expectedTodoDto.getId());
         assertThat(createdTodoDto.getTitle()).isEqualTo(expectedTodoDto.getTitle());
         assertThat(createdTodoDto.getDescription()).isEqualTo(expectedTodoDto.getDescription());
-        assertThat(createdTodoDto.getTags()).isPresent();
-        assertThat(createdTodoDto.getTags()).containsSame(expectedTodoDto.getTags().get());
+        assertThat(createdTodoDto.getTags()).containsAll(expectedTodoDto.getTags());
         assertThat(createdTodoDto.getCreationTime()).isEqualTo(expectedTodoDto.getCreationTime());
     }
 
@@ -87,24 +86,23 @@ class TodoServiceTest {
         String changedDescription = "Changed Description";
         Todo expectedTodo2 = createTestTodo();
         expectedTodo2.setDescription(changedDescription);
-        expectedTodoDto = ImmutableResponseTodoDto.copyOf(expectedTodoDto)
+        expectedTodoDto = ImmutableTodoResponse.copyOf(expectedTodoDto)
                 .withDescription(changedDescription);
 
         Mockito.when(repository.findById(any(UUID.class))).thenReturn(Optional.of(expectedTodo));
         Mockito.when(repository.save(any(Todo.class))).thenReturn(expectedTodo2);
-        Mockito.when(mapper.toResponseTodoDto(any(Todo.class))).thenReturn(expectedTodoDto);
+        Mockito.when(mapper.toTodoResponse(any(Todo.class))).thenReturn(expectedTodoDto);
 
-        OptionalRequestTodoDto requestDto = ImmutableOptionalRequestTodoDto.builder()
+        UpdateTodoRequest requestDto = ImmutableUpdateTodoRequest.builder()
                 .description(changedDescription)
                 .build();
 
-        ResponseTodoDto createdTodoDto = service.update(TEST_ID, requestDto);
+        TodoResponse createdTodoDto = service.update(TEST_ID, requestDto);
 
         assertThat(createdTodoDto.getId()).isEqualTo(expectedTodoDto.getId());
         assertThat(createdTodoDto.getTitle()).isEqualTo(expectedTodoDto.getTitle());
         assertThat(createdTodoDto.getDescription()).isEqualTo(expectedTodoDto.getDescription());
-        assertThat(createdTodoDto.getTags()).isPresent();
-        assertThat(createdTodoDto.getTags()).containsSame(expectedTodoDto.getTags().get());
+        assertThat(createdTodoDto.getTags()).containsAll(expectedTodoDto.getTags());
         assertThat(createdTodoDto.getDone()).isEqualTo(expectedTodoDto.getDone());
         assertThat(createdTodoDto.getCreationTime()).isEqualTo(expectedTodoDto.getCreationTime());
     }
@@ -114,17 +112,17 @@ class TodoServiceTest {
         Mockito.when(repository.save(any(Todo.class))).thenReturn(expectedTodo);
         Mockito.when(repository.findById(any(UUID.class))).thenReturn(Optional.of(expectedTodo));
 
-        ResponseTodoDto createdTodo = service.create(todoCreationDto);
+        TodoResponse createdTodo = service.create(todoCreationDto);
 
         String changedTitle = "Changed Title";
 
         expectedTodo.setTitle(changedTitle);
-        todoCreationDto = ImmutableRequestTodoDto.copyOf(todoCreationDto).withTitle(changedTitle);
-        expectedTodoDto = ImmutableResponseTodoDto.copyOf(expectedTodoDto).withTitle(changedTitle);
+        todoCreationDto = ImmutableTodoRequest.copyOf(todoCreationDto).withTitle(changedTitle);
+        expectedTodoDto = ImmutableTodoResponse.copyOf(expectedTodoDto).withTitle(changedTitle);
 
-        Mockito.when(mapper.toResponseTodoDto(any(Todo.class))).thenReturn(expectedTodoDto);
+        Mockito.when(mapper.toTodoResponse(any(Todo.class))).thenReturn(expectedTodoDto);
 
-        ResponseTodoDto replacedTodo = service.replace(createdTodo.getId(), todoCreationDto);
+        TodoResponse replacedTodo = service.replace(createdTodo.getId(), todoCreationDto);
 
         verify(repository, times(2)).save(any(Todo.class));
 
@@ -136,17 +134,16 @@ class TodoServiceTest {
     void shouldFindTodo() {
         Mockito.when(repository.findById(TEST_ID)).thenReturn(Optional.of(expectedTodo));
 
-        Optional<ResponseTodoDto> optionalTodo = service.findById(TEST_ID);
+        Optional<TodoResponse> optionalTodo = service.findById(TEST_ID);
 
         assertThat(optionalTodo).isNotEmpty();
 
-        ResponseTodoDto todo = optionalTodo.get();
+        TodoResponse todo = optionalTodo.get();
 
         assertThat(todo.getId()).isEqualTo(expectedTodoDto.getId());
         assertThat(todo.getTitle()).isEqualTo(expectedTodoDto.getTitle());
         assertThat(todo.getDescription()).isEqualTo(expectedTodoDto.getDescription());
-        assertThat(todo.getTags()).isPresent();
-        assertThat(todo.getTags()).containsSame(expectedTodoDto.getTags().get());
+        assertThat(todo.getTags()).containsAll(expectedTodoDto.getTags());
         assertThat(todo.getCreationTime()).isEqualTo(expectedTodoDto.getCreationTime());
     }
 
@@ -159,7 +156,7 @@ class TodoServiceTest {
         );
         Mockito.when(repository.findAll()).thenReturn(testList);
 
-        List<? extends ResponseTodoDto> todoList = service.findAll();
+        List<? extends TodoResponse> todoList = service.findAll();
 
         assertThat(todoList).hasSize(testList.size());
     }
@@ -173,7 +170,7 @@ class TodoServiceTest {
         );
         Mockito.when(repository.findAllDone(Boolean.FALSE)).thenReturn(testList);
 
-        List<? extends ResponseTodoDto> todoList = service.findAllDone(Boolean.FALSE);
+        List<? extends TodoResponse> todoList = service.findAllDone(Boolean.FALSE);
 
         assertThat(todoList).hasSize(testList.size());
     }

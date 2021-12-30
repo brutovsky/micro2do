@@ -9,13 +9,19 @@ import java.util.Optional;
 import java.util.Set;
 
 @Value.Immutable
-@JsonSerialize(as = ImmutableOptionalRequestTodoDto.class)
-@JsonDeserialize(as = ImmutableOptionalRequestTodoDto.class)
-public interface OptionalRequestTodoDto {
+@Value.Style(jdkOnly = true)
+@JsonSerialize(as = ImmutableUpdateTodoRequest.class)
+@JsonDeserialize(as = ImmutableUpdateTodoRequest.class)
+public interface UpdateTodoRequest {
     Optional<String> getTitle();
+
     Optional<String> getDescription();
+
     Optional<Boolean> getDone();
+
     Optional<Set<String>> getTags();
+
     Optional<Date> getCreationTime();
+
     Optional<Date> getCompletionTime();
 }

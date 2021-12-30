@@ -1,9 +1,9 @@
 package com.brtvsk.todoservice.controller;
 
 import com.brtvsk.todoservice.exception.TodoNotFoundException;
-import com.brtvsk.todoservice.model.dto.OptionalRequestTodoDto;
-import com.brtvsk.todoservice.model.dto.RequestTodoDto;
-import com.brtvsk.todoservice.model.dto.ResponseTodoDto;
+import com.brtvsk.todoservice.model.dto.UpdateTodoRequest;
+import com.brtvsk.todoservice.model.dto.TodoRequest;
+import com.brtvsk.todoservice.model.dto.TodoResponse;
 import com.brtvsk.todoservice.service.TodoService;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +30,7 @@ public class TodoController {
     }
 
     @GetMapping
-    public List<ResponseTodoDto> all(Optional<Boolean> done) {
+    public List<TodoResponse> all(Optional<Boolean> done) {
         if (done.isPresent()) {
             return todoService.findAllDone(done.get());
         } else {
@@ -39,23 +39,23 @@ public class TodoController {
     }
 
     @PostMapping
-    public ResponseTodoDto createTodo(@RequestBody final RequestTodoDto todoDto) {
+    public TodoResponse createTodo(@RequestBody final TodoRequest todoDto) {
         return todoService.create(todoDto);
     }
 
     @GetMapping("/{id}")
-    public ResponseTodoDto one(@PathVariable final UUID id) {
+    public TodoResponse one(@PathVariable final UUID id) {
         return todoService.findById(id)
                 .orElseThrow(() -> new TodoNotFoundException(id.toString()));
     }
 
     @PutMapping("/{id}")
-    public ResponseTodoDto replaceTodo(@PathVariable final UUID id, @RequestBody final RequestTodoDto newTodo) {
+    public TodoResponse replaceTodo(@PathVariable final UUID id, @RequestBody final TodoRequest newTodo) {
         return todoService.replace(id, newTodo);
     }
 
     @PatchMapping("/{id}")
-    public ResponseTodoDto updateTodo(@PathVariable final UUID id, @RequestBody final OptionalRequestTodoDto newTodo) {
+    public TodoResponse updateTodo(@PathVariable final UUID id, @RequestBody final UpdateTodoRequest newTodo) {
         return todoService.update(id, newTodo);
     }
 

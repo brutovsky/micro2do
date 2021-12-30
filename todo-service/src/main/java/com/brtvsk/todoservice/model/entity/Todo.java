@@ -3,6 +3,7 @@ package com.brtvsk.todoservice.model.entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
@@ -17,7 +18,7 @@ public class Todo {
     private String title;
     private String description;
     private Boolean done;
-    private Set<String> tags;
+    private Set<String> tags = Collections.emptySet();
     private Date creationTime;
     private Date completionTime;
 
@@ -54,11 +55,8 @@ public class Todo {
     }
 
     public Set<String> getTags() {
-        if (tags == null) {
-            return Set.of();
-        } else {
-            return Set.copyOf(tags);
-        }
+        System.out.println("WTF " + tags.toString());
+        return Set.copyOf(tags);
     }
 
     public void setTags(final Set<String> tags) {

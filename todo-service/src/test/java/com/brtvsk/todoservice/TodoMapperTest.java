@@ -1,10 +1,10 @@
 package com.brtvsk.todoservice;
 
-import com.brtvsk.todoservice.model.dto.ImmutableOptionalRequestTodoDto;
-import com.brtvsk.todoservice.model.dto.ImmutableRequestTodoDto;
-import com.brtvsk.todoservice.model.dto.OptionalRequestTodoDto;
-import com.brtvsk.todoservice.model.dto.RequestTodoDto;
-import com.brtvsk.todoservice.model.dto.ResponseTodoDto;
+import com.brtvsk.todoservice.model.dto.ImmutableUpdateTodoRequest;
+import com.brtvsk.todoservice.model.dto.ImmutableTodoRequest;
+import com.brtvsk.todoservice.model.dto.UpdateTodoRequest;
+import com.brtvsk.todoservice.model.dto.TodoRequest;
+import com.brtvsk.todoservice.model.dto.TodoResponse;
 import com.brtvsk.todoservice.model.entity.Todo;
 import com.brtvsk.todoservice.utils.OptionalMapper;
 import com.brtvsk.todoservice.utils.TodoMapper;
@@ -44,14 +44,14 @@ class TodoMapperTest {
 
     @Test
     void shouldMapRequestTodoDto() {
-        RequestTodoDto requestTodoDto = ImmutableRequestTodoDto.builder()
+        TodoRequest todoRequest = ImmutableTodoRequest.builder()
                 .title(TEST_TITLE)
                 .description(TEST_DESCRIPTION)
                 .creationTime(TEST_CREATION_TIME)
                 .done(IS_DONE)
                 .build();
 
-        todo = mapper.fromRequestTodoDto(requestTodoDto);
+        todo = mapper.fromTodoRequest(todoRequest);
 
         assertThat(todo).isNotNull();
         assertThat(todo.getTitle()).isEqualTo(TEST_TITLE);
@@ -62,13 +62,13 @@ class TodoMapperTest {
 
     @Test
     void shouldMapOptionalRequestTodoDto() {
-        OptionalRequestTodoDto optionalRequestTodoDto = ImmutableOptionalRequestTodoDto.builder()
+        UpdateTodoRequest updateTodoRequest = ImmutableUpdateTodoRequest.builder()
                 .description(TEST_DESCRIPTION)
                 .completionTime(TEST_COMPLETION_TIME)
                 .done(IS_DONE)
                 .build();
 
-        todo = mapper.fromOptionalRequestTodoDto(optionalRequestTodoDto);
+        todo = mapper.fromUpdateTodoRequest(updateTodoRequest);
 
         assertThat(todo).isNotNull();
         assertThat(todo.getDescription()).isEqualTo(TEST_DESCRIPTION);
@@ -78,16 +78,16 @@ class TodoMapperTest {
 
     @Test
     void shouldMapTodo() {
-        ResponseTodoDto responseTodoDto = mapper.toResponseTodoDto(createTestTodo());
+        TodoResponse todoResponse = mapper.toTodoResponse(createTestTodo());
 
-        assertThat(responseTodoDto).isNotNull();
-        assertThat(responseTodoDto.getId()).isEqualTo(TEST_ID);
-        assertThat(responseTodoDto.getTitle()).isEqualTo(TEST_TITLE);
-        assertThat(responseTodoDto.getDescription()).contains(TEST_DESCRIPTION);
-        assertThat(responseTodoDto.getCreationTime()).isEqualTo(TEST_CREATION_TIME);
-        assertThat(responseTodoDto.getCompletionTime()).contains(TEST_COMPLETION_TIME);
-        assertThat(responseTodoDto.getDone()).isEqualTo(IS_DONE);
-        assertThat(responseTodoDto.getTags()).containsSame(TEST_TAGS);
+        assertThat(todoResponse).isNotNull();
+        assertThat(todoResponse.getId()).isEqualTo(TEST_ID);
+        assertThat(todoResponse.getTitle()).isEqualTo(TEST_TITLE);
+        assertThat(todoResponse.getDescription()).contains(TEST_DESCRIPTION);
+        assertThat(todoResponse.getCreationTime()).isEqualTo(TEST_CREATION_TIME);
+        assertThat(todoResponse.getCompletionTime()).contains(TEST_COMPLETION_TIME);
+        assertThat(todoResponse.getDone()).isEqualTo(IS_DONE);
+        assertThat(todoResponse.getTags()).containsAll(TEST_TAGS);
     }
 
 }

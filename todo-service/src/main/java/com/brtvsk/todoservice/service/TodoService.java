@@ -1,8 +1,8 @@
 package com.brtvsk.todoservice.service;
 
-import com.brtvsk.todoservice.model.dto.OptionalRequestTodoDto;
-import com.brtvsk.todoservice.model.dto.RequestTodoDto;
-import com.brtvsk.todoservice.model.dto.ResponseTodoDto;
+import com.brtvsk.todoservice.model.dto.UpdateTodoRequest;
+import com.brtvsk.todoservice.model.dto.TodoRequest;
+import com.brtvsk.todoservice.model.dto.TodoResponse;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,12 +10,12 @@ import java.util.UUID;
 
 public interface TodoService {
 
-    ResponseTodoDto create(RequestTodoDto todoDto);
-    Optional<ResponseTodoDto> findById(UUID id);
-    List<ResponseTodoDto> findAll();
-    List<ResponseTodoDto> findAllDone(boolean done);
-    ResponseTodoDto replace(UUID id, RequestTodoDto todoDto);
-    ResponseTodoDto update(UUID id, OptionalRequestTodoDto todoDto);
+    TodoResponse create(TodoRequest todoDto);
+    Optional<TodoResponse> findById(UUID id);
+    List<TodoResponse> findAll();
+    List<TodoResponse> findAllDone(boolean done);
+    TodoResponse replace(UUID id, TodoRequest todoDto);
+    TodoResponse update(UUID id, UpdateTodoRequest todoDto);
     void delete(UUID id);
 
 }

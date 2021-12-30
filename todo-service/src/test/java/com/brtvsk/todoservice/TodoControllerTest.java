@@ -2,12 +2,12 @@ package com.brtvsk.todoservice;
 
 import com.brtvsk.todoservice.controller.TodoController;
 import com.brtvsk.todoservice.i18n.Translator;
-import com.brtvsk.todoservice.model.dto.ImmutableOptionalRequestTodoDto;
-import com.brtvsk.todoservice.model.dto.ImmutableRequestTodoDto;
-import com.brtvsk.todoservice.model.dto.ImmutableResponseTodoDto;
-import com.brtvsk.todoservice.model.dto.OptionalRequestTodoDto;
-import com.brtvsk.todoservice.model.dto.RequestTodoDto;
-import com.brtvsk.todoservice.model.dto.ResponseTodoDto;
+import com.brtvsk.todoservice.model.dto.ImmutableUpdateTodoRequest;
+import com.brtvsk.todoservice.model.dto.ImmutableTodoRequest;
+import com.brtvsk.todoservice.model.dto.ImmutableTodoResponse;
+import com.brtvsk.todoservice.model.dto.UpdateTodoRequest;
+import com.brtvsk.todoservice.model.dto.TodoRequest;
+import com.brtvsk.todoservice.model.dto.TodoResponse;
 import com.brtvsk.todoservice.service.TodoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -35,7 +35,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@WebMvcTest(TodoController.class)
+@WebMvcTest({TodoController.class, Translator.class})
 class TodoControllerTest {
 
     @Autowired
@@ -45,16 +45,13 @@ class TodoControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private Translator translator;
-
-    @MockBean
     private TodoService todoService;
 
     private static final String BASE_PATH = "/api/v1/todo/";
 
     @Test
     void shouldCreateTodo() throws Exception {
-        ResponseTodoDto expectedTodoResponse = ImmutableResponseTodoDto
+        TodoResponse expectedTodoResponse = ImmutableTodoResponse
                 .builder()
                 .id(TEST_ID)
                 .title(TEST_TITLE)
@@ -64,7 +61,7 @@ class TodoControllerTest {
                 .creationTime(TEST_CREATION_TIME)
                 .build();
 
-        RequestTodoDto todoCreationRequest = ImmutableRequestTodoDto.builder()
+        TodoRequest todoCreationRequest = ImmutableTodoRequest.builder()
                 .title(TEST_TITLE)
                 .description(TEST_DESCRIPTION)
                 .tags(TEST_TAGS)
@@ -76,8 +73,11 @@ class TodoControllerTest {
         final String jsonRequest = objectMapper.writeValueAsString(todoCreationRequest);
         final String expectedResponse = objectMapper.writeValueAsString(expectedTodoResponse);
 
+        System.out.println("EEE " + jsonRequest);
+
         mockMvc.perform(
                         MockMvcRequestBuilders.post(BASE_PATH)
+                                .accept(MediaType.APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(jsonRequest)
                 )
@@ -89,7 +89,7 @@ class TodoControllerTest {
 
     @Test
     void shouldReplaceTodo() throws Exception {
-        ResponseTodoDto expectedTodoResponse = ImmutableResponseTodoDto
+        TodoResponse expectedTodoResponse = ImmutableTodoResponse
                 .builder()
                 .id(TEST_ID)
                 .title(TEST_TITLE)
@@ -99,14 +99,14 @@ class TodoControllerTest {
                 .creationTime(TEST_CREATION_TIME)
                 .build();
 
-        RequestTodoDto todoCreationRequest = ImmutableRequestTodoDto.builder()
+        TodoRequest todoCreationRequest = ImmutableTodoRequest.builder()
                 .title(TEST_TITLE)
                 .description(TEST_DESCRIPTION)
                 .done(IS_DONE)
                 .tags(TEST_TAGS)
                 .build();
 
-        when(todoService.replace(any(UUID.class), any(RequestTodoDto.class)))
+        when(todoService.replace(any(UUID.class), any(TodoRequest.class)))
                 .thenReturn(expectedTodoResponse);
 
         final String jsonRequest = objectMapper.writeValueAsString(todoCreationRequest);
@@ -125,7 +125,7 @@ class TodoControllerTest {
 
     @Test
     void shouldUpdateTodo() throws Exception {
-        ResponseTodoDto expectedTodoResponse = ImmutableResponseTodoDto
+        TodoResponse expectedTodoResponse = ImmutableTodoResponse
                 .builder()
                 .id(TEST_ID)
                 .title(TEST_TITLE)
@@ -136,13 +136,14 @@ class TodoControllerTest {
                 .completionTime(TEST_COMPLETION_TIME)
                 .build();
 
-        OptionalRequestTodoDto optionalTodoCreationRequest = ImmutableOptionalRequestTodoDto.builder()
+        UpdateTodoRequest optionalTodoCreationRequest = ImmutableUpdateTodoRequest.builder()
                 .description(TEST_DESCRIPTION)
                 .done(IS_DONE)
                 .completionTime(TEST_COMPLETION_TIME)
+                .tags(TEST_TAGS)
                 .build();
 
-        when(todoService.update(any(UUID.class), any(OptionalRequestTodoDto.class)))
+        when(todoService.update(any(UUID.class), any(UpdateTodoRequest.class)))
                 .thenReturn(expectedTodoResponse);
 
         final String jsonRequest = objectMapper.writeValueAsString(optionalTodoCreationRequest);
@@ -161,7 +162,7 @@ class TodoControllerTest {
 
     @Test
     void shouldFindTodo() throws Exception {
-        ResponseTodoDto expectedTodoResponse = ImmutableResponseTodoDto
+        TodoResponse expectedTodoResponse = ImmutableTodoResponse
                 .builder()
                 .id(TEST_ID)
                 .title(TEST_TITLE)
@@ -185,14 +186,14 @@ class TodoControllerTest {
 
     @Test
     void shouldFindAll() throws Exception {
-        List<ResponseTodoDto> expectedList = List.of(
-                ImmutableResponseTodoDto.builder()
+        List<TodoResponse> expectedList = List.of(
+                ImmutableTodoResponse.builder()
                         .id(TEST_ID)
                         .title(TEST_TITLE)
                         .done(IS_DONE)
                         .creationTime(TEST_CREATION_TIME)
                         .build(),
-                ImmutableResponseTodoDto.builder()
+                ImmutableTodoResponse.builder()
                         .id(TEST_ID)
                         .title(TEST_TITLE)
                         .done(IS_DONE)

@@ -10,13 +10,24 @@ services:
       - "27017:27017"
     volumes:
       - todo:/var/lib/mongodb
-  todo-service-api:
+  todo-service-api-1:
     image: todo-service-image
-    container_name: todo-service-api
+    container_name: todo-service-api-1
     expose:
-      - 8080
+      - 8081
     ports:
-      - "8080:8080"
+      - "8081:8080"
+    restart: always
+    depends_on:
+      - todo-service-database
+
+  todo-service-api-2:
+    image: todo-service-image
+    container_name: todo-service-api-2
+    expose:
+      - 8082
+    ports:
+      - "8082:8080"
     restart: always
     depends_on:
       - todo-service-database
@@ -35,10 +46,8 @@ services:
     restart: unless-stopped
 
   keycloak:
-    image: jboss/keycloak:16.0.0
+    image: custom-keycloak
     container_name: keycloak
-    volumes:
-      - ./keycloak/master-realm.json:/opt/jboss/keycloak/imports/realm-export.json
     environment:
       DB_VENDOR: POSTGRES
       DB_ADDR: auth-service-database
@@ -47,7 +56,6 @@ services:
       DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: admin_password
-      KEYCLOAK_IMPORT: /opt/jboss/keycloak/imports/realm-export.json
     ports:
       - "8484:8080"
     depends_on:

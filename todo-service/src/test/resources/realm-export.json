@@ -692,6 +692,7 @@
       "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": false,
       "serviceAccountsEnabled": false,
+      "authorizationServicesEnabled": true,
       "publicClient": false,
       "frontchannelLogout": false,
       "protocol": "openid-connect",
@@ -700,7 +701,209 @@
       "fullScopeAllowed": false,
       "nodeReRegistrationTimeout": 0,
       "defaultClientScopes": [],
-      "optionalClientScopes": []
+      "optionalClientScopes": [],
+      "authorizationSettings": {
+        "allowRemoteResourceManagement": false,
+        "policyEnforcementMode": "ENFORCING",
+        "resources": [
+          {
+            "name": "idp.resource.68afac49-491c-4b36-afd1-529faccae07d",
+            "type": "IdentityProvider",
+            "ownerManagedAccess": false,
+            "attributes": {},
+            "_id": "f085439b-b311-4bb9-871b-43161f6a3a68",
+            "uris": [],
+            "scopes": [
+              {
+                "name": "token-exchange"
+              }
+            ]
+          },
+          {
+            "name": "client.resource.a1293d43-b825-4b5e-9e7d-be090d76f396",
+            "type": "Client",
+            "ownerManagedAccess": false,
+            "attributes": {},
+            "_id": "4048ecc3-6b6d-422c-8ea8-b8b9a2222e3c",
+            "uris": [],
+            "scopes": [
+              {
+                "name": "view"
+              },
+              {
+                "name": "map-roles-client-scope"
+              },
+              {
+                "name": "configure"
+              },
+              {
+                "name": "map-roles"
+              },
+              {
+                "name": "manage"
+              },
+              {
+                "name": "token-exchange"
+              },
+              {
+                "name": "map-roles-composite"
+              }
+            ]
+          }
+        ],
+        "policies": [
+          {
+            "id": "3f1beb1f-c65d-46c3-9f04-d4f6371ed519",
+            "name": "github-client-policy",
+            "type": "client",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "clients": "[\"auth-client\"]"
+            }
+          },
+          {
+            "id": "be7a9536-681c-452a-a5b9-7862963e6b85",
+            "name": "hah",
+            "type": "client",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "clients": "[\"auth-client\"]"
+            }
+          },
+          {
+            "id": "c64b51a4-e1b4-4fef-ae0b-9f438917ff56",
+            "name": "github-exchange-policy",
+            "type": "client",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "clients": "[\"auth-client\"]"
+            }
+          },
+          {
+            "id": "ab4107ed-4707-46b0-b985-cde9bc5b3417",
+            "name": "token-exchange.permission.idp.68afac49-491c-4b36-afd1-529faccae07d",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"idp.resource.68afac49-491c-4b36-afd1-529faccae07d\"]",
+              "scopes": "[\"token-exchange\"]",
+              "applyPolicies": "[\"github-exchange-policy\"]"
+            }
+          },
+          {
+            "id": "6b151dc2-0293-4b28-b65c-cae540802b6c",
+            "name": "manage.permission.client.a1293d43-b825-4b5e-9e7d-be090d76f396",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"client.resource.a1293d43-b825-4b5e-9e7d-be090d76f396\"]",
+              "scopes": "[\"manage\"]"
+            }
+          },
+          {
+            "id": "823acbf0-2570-4e62-a2d6-67b855fce44c",
+            "name": "configure.permission.client.a1293d43-b825-4b5e-9e7d-be090d76f396",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"client.resource.a1293d43-b825-4b5e-9e7d-be090d76f396\"]",
+              "scopes": "[\"configure\"]"
+            }
+          },
+          {
+            "id": "744fb9c2-98c3-47d8-8e14-c6d9ed0cd7d5",
+            "name": "view.permission.client.a1293d43-b825-4b5e-9e7d-be090d76f396",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"client.resource.a1293d43-b825-4b5e-9e7d-be090d76f396\"]",
+              "scopes": "[\"view\"]"
+            }
+          },
+          {
+            "id": "6963527f-5a78-4105-a24c-99596a3aae34",
+            "name": "map-roles.permission.client.a1293d43-b825-4b5e-9e7d-be090d76f396",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"client.resource.a1293d43-b825-4b5e-9e7d-be090d76f396\"]",
+              "scopes": "[\"map-roles\"]"
+            }
+          },
+          {
+            "id": "85cf245c-d094-4eae-b992-2c3571d8a478",
+            "name": "map-roles-client-scope.permission.client.a1293d43-b825-4b5e-9e7d-be090d76f396",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"client.resource.a1293d43-b825-4b5e-9e7d-be090d76f396\"]",
+              "scopes": "[\"map-roles-client-scope\"]"
+            }
+          },
+          {
+            "id": "af377b3e-06be-4f8e-ad42-4f59b15759aa",
+            "name": "map-roles-composite.permission.client.a1293d43-b825-4b5e-9e7d-be090d76f396",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"client.resource.a1293d43-b825-4b5e-9e7d-be090d76f396\"]",
+              "scopes": "[\"map-roles-composite\"]"
+            }
+          },
+          {
+            "id": "c4e68a4b-ecb8-449c-a139-cf80f82fe58d",
+            "name": "token-exchange.permission.client.a1293d43-b825-4b5e-9e7d-be090d76f396",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"client.resource.a1293d43-b825-4b5e-9e7d-be090d76f396\"]",
+              "scopes": "[\"token-exchange\"]"
+            }
+          }
+        ],
+        "scopes": [
+          {
+            "id": "0a9199fa-3cdc-4050-9143-cb8da9d0fb23",
+            "name": "token-exchange"
+          },
+          {
+            "id": "af2b9bfc-5d95-4183-9cea-d4068ed73ab9",
+            "name": "manage"
+          },
+          {
+            "id": "e93bfeaf-039d-4444-8990-96c00fdd7566",
+            "name": "view"
+          },
+          {
+            "id": "b16c82d5-0b15-4a44-b5fe-4c950dd21822",
+            "name": "map-roles"
+          },
+          {
+            "id": "fd152be9-5983-45c1-9eb9-5903a7d03ce5",
+            "name": "map-roles-client-scope"
+          },
+          {
+            "id": "fa0a3984-790e-4481-9544-316d47be5d60",
+            "name": "map-roles-composite"
+          },
+          {
+            "id": "021f959b-24d1-4576-b3f2-785dde804835",
+            "name": "configure"
+          }
+        ],
+        "decisionStrategy": "UNANIMOUS"
+      }
     },
     {
       "id": "7b653056-d876-4d7a-856a-5e1ad7711444",

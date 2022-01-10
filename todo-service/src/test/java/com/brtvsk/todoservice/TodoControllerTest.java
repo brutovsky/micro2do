@@ -36,6 +36,7 @@ import static com.brtvsk.todoservice.TodoTestUtils.TEST_ID;
 import static com.brtvsk.todoservice.TodoTestUtils.TEST_TAGS;
 import static com.brtvsk.todoservice.TodoTestUtils.TEST_TITLE;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -223,6 +224,35 @@ class TodoControllerTest {
                 .andExpect(MockMvcResultMatchers.content().json(expectedResponse));
 
         verify(todoService).findAll(any());
+    }
+
+    @WithMockUser(value = "user", roles = {"USER"})
+    @Test
+    void shouldFindAllDone() throws Exception {
+        List<TodoResponse> expectedList = List.of(
+                ImmutableTodoResponse.builder()
+                        .id(TEST_ID)
+                        .title(TEST_TITLE)
+                        .done(IS_DONE)
+                        .creationTime(TEST_CREATION_TIME)
+                        .build(),
+                ImmutableTodoResponse.builder()
+                        .id(TEST_ID)
+                        .title(TEST_TITLE)
+                        .done(IS_DONE)
+                        .creationTime(TEST_CREATION_TIME)
+                        .build()
+        );
+
+        when(todoService.findAllDone(anyBoolean(), any())).thenReturn(expectedList);
+
+        final String expectedResponse = objectMapper.writeValueAsString(expectedList);
+
+        mockMvc.perform(MockMvcRequestBuilders.get(BASE_PATH + "?done=true"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().json(expectedResponse));
+
+        verify(todoService).findAllDone(anyBoolean(), any());
     }
 
     @WithMockUser(value = "user", roles = {"USER"})

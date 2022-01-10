@@ -28,8 +28,22 @@ class TodoRepositoryTest {
     }
 
     @Test
+    void shouldFindAllSecured() {
+        UUID userId = UUID.randomUUID();
+        repository.findAll(userId);
+        verify(mongoTemplate, times(1)).find(any(Query.class), eq(Todo.class));
+    }
+
+    @Test
     void shouldFindAllDone() {
-        repository.findAllDone(Boolean.TRUE);
+        repository.findAllDone(true);
+        verify(mongoTemplate, times(1)).find(any(Query.class), eq(Todo.class));
+    }
+
+    @Test
+    void shouldFindAllDoneSecured() {
+        UUID userId = UUID.randomUUID();
+        repository.findAllDone(true, userId);
         verify(mongoTemplate, times(1)).find(any(Query.class), eq(Todo.class));
     }
 
@@ -38,6 +52,14 @@ class TodoRepositoryTest {
         UUID id = UUID.randomUUID();
         repository.findById(id);
         verify(mongoTemplate, times(1)).findById(id, Todo.class);
+    }
+
+    @Test
+    void shouldFindByIdSecured() {
+        UUID id = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
+        repository.findById(id, userId);
+        verify(mongoTemplate, times(1)).find(any(Query.class), eq(Todo.class));
     }
 
     @Test
@@ -58,6 +80,14 @@ class TodoRepositoryTest {
     void shouldDeleteById() {
         UUID id = UUID.randomUUID();
         repository.deleteById(id);
+        verify(mongoTemplate, times(1)).remove(any(Query.class), eq(Todo.class));
+    }
+
+    @Test
+    void shouldDeleteByIdSecured() {
+        UUID id = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
+        repository.deleteById(id, userId);
         verify(mongoTemplate, times(1)).remove(any(Query.class), eq(Todo.class));
     }
 

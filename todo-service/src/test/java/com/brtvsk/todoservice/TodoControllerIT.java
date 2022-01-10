@@ -70,7 +70,6 @@ class TodoControllerIT {
                 .withRealmImportFile("realm-export.json")
                 .withAdminUsername(ADMIN_USERNAME)
                 .withAdminPassword(ADMIN_PASSWORD);
-        KEYCLOAK_CONTAINER.addExposedPort(8080);
         KEYCLOAK_CONTAINER.start();
         AUTH_SERVER_URL = KEYCLOAK_CONTAINER.getAuthServerUrl();
     }

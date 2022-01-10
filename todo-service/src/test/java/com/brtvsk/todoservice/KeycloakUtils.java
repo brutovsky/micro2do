@@ -13,6 +13,9 @@ final class KeycloakUtils {
     public static final String REALM = "micro2do-realm";
     public static final String CLIENT = "auth-client";
 
+    private KeycloakUtils() {
+    }
+
     public static String getAdminAccessToken(String authServerUrl, String username, String password) {
         String tokenUrl = authServerUrl + "/realms/master/protocol/openid-connect/token";
         return RestAssured.given().contentType("application/x-www-form-urlencoded")
@@ -28,10 +31,10 @@ final class KeycloakUtils {
     }
 
     public static String getAccessToken(String authServerUrl, String username, String password) {
-        String tokenUrl = authServerUrl +
-                "/realms/" +
-                REALM +
-                "/protocol/openid-connect/token";
+        String tokenUrl = authServerUrl
+                + "/realms/"
+                + REALM
+                + "/protocol/openid-connect/token";
         return RestAssured.given().contentType("application/x-www-form-urlencoded")
                 .formParams(Map.of(
                         "username", username,

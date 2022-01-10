@@ -1,24 +1,23 @@
 package com.brtvsk.todoservice.controller;
 
 import com.brtvsk.todoservice.exception.TodoNotFoundException;
-import com.brtvsk.todoservice.model.dto.UpdateTodoRequest;
 import com.brtvsk.todoservice.model.dto.TodoRequest;
 import com.brtvsk.todoservice.model.dto.TodoResponse;
+import com.brtvsk.todoservice.model.dto.UpdateTodoRequest;
 import com.brtvsk.todoservice.service.TodoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Optional;
@@ -100,23 +99,6 @@ public class TodoController {
     @DeleteMapping("/{id}")
     public void deleteTodo(@PathVariable final UUID id, final Authentication authentication) {
         todoService.delete(id, authentication);
-    }
-
-    @GetMapping("/premium")
-    @PreAuthorize("hasRole('PREMIUM')")
-    public String premium() {
-        return "premium info";
-    }
-
-    @GetMapping("/user")
-    @PreAuthorize("hasRole('USER')")
-    public String user() {
-        return "user info";
-    }
-
-    @GetMapping("/info")
-    public String info(final Authentication authentication) {
-        return authentication.getName();
     }
 
 }

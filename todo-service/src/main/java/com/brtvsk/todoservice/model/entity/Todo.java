@@ -15,6 +15,7 @@ public class Todo {
 
     @Id
     private UUID id;
+    private UUID ownerId;
     private String title;
     private String description;
     private Boolean done;
@@ -28,6 +29,14 @@ public class Todo {
 
     public void setId(final UUID id) {
         this.id = id;
+    }
+
+    public UUID getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(final UUID ownerId) {
+        this.ownerId = ownerId;
     }
 
     public String getTitle() {

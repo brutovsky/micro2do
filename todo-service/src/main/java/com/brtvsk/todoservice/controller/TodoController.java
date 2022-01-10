@@ -8,6 +8,8 @@ import com.brtvsk.todoservice.service.TodoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,11 +40,11 @@ public class TodoController {
     }
     )
     @GetMapping
-    public List<TodoResponse> all(Optional<Boolean> done) {
+    public List<TodoResponse> all(Optional<Boolean> done, final Authentication authentication) {
         if (done.isPresent()) {
-            return todoService.findAllDone(done.get());
+            return todoService.findAllDone(done.get(), authentication);
         } else {
-            return todoService.findAll();
+            return todoService.findAll(authentication);
         }
     }
 
@@ -52,8 +54,8 @@ public class TodoController {
     }
     )
     @PostMapping
-    public TodoResponse createTodo(@RequestBody final TodoRequest todoDto) {
-        return todoService.create(todoDto);
+    public TodoResponse createTodo(@RequestBody final TodoRequest todoDto, final Authentication authentication) {
+        return todoService.create(todoDto, authentication);
     }
 
     @Operation(summary = "Search a todo with an id")
@@ -63,8 +65,8 @@ public class TodoController {
     }
     )
     @GetMapping("/{id}")
-    public TodoResponse one(@PathVariable final UUID id) {
-        return todoService.findById(id)
+    public TodoResponse one(@PathVariable final UUID id, final Authentication authentication) {
+        return todoService.findById(id, authentication)
                 .orElseThrow(() -> new TodoNotFoundException(id.toString()));
     }
 
@@ -75,8 +77,8 @@ public class TodoController {
     }
     )
     @PutMapping("/{id}")
-    public TodoResponse replaceTodo(@PathVariable final UUID id, @RequestBody final TodoRequest newTodo) {
-        return todoService.replace(id, newTodo);
+    public TodoResponse replaceTodo(@PathVariable final UUID id, @RequestBody final TodoRequest newTodo, final Authentication authentication) {
+        return todoService.replace(id, newTodo, authentication);
     }
 
     @Operation(summary = "Update an existing todo by id")
@@ -86,8 +88,8 @@ public class TodoController {
     }
     )
     @PatchMapping("/{id}")
-    public TodoResponse updateTodo(@PathVariable final UUID id, @RequestBody final UpdateTodoRequest newTodo) {
-        return todoService.update(id, newTodo);
+    public TodoResponse updateTodo(@PathVariable final UUID id, @RequestBody final UpdateTodoRequest newTodo, final Authentication authentication) {
+        return todoService.update(id, newTodo, authentication);
     }
 
     @Operation(summary = "Delete todo by id")
@@ -96,8 +98,25 @@ public class TodoController {
     }
     )
     @DeleteMapping("/{id}")
-    void deleteTodo(@PathVariable final UUID id) {
-        todoService.delete(id);
+    public void deleteTodo(@PathVariable final UUID id, final Authentication authentication) {
+        todoService.delete(id, authentication);
+    }
+
+    @GetMapping("/premium")
+    @PreAuthorize("hasRole('PREMIUM')")
+    public String premium() {
+        return "premium info";
+    }
+
+    @GetMapping("/user")
+    @PreAuthorize("hasRole('USER')")
+    public String user() {
+        return "user info";
+    }
+
+    @GetMapping("/info")
+    public String info(final Authentication authentication) {
+        return authentication.getName();
     }
 
 }

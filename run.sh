@@ -1,5 +1,5 @@
 #!/bin/bash
-mvn clean install -DskipIntegrationTests -DskipTests
+mvn clean install -DskipTests
 rc=$?
 if [ $rc -ne 0 ] ; then
   echo Could not perform mvn clean install, exit code [$rc]; exit $rc

@@ -11,6 +11,7 @@ import com.brtvsk.todoservice.model.dto.TodoResponse;
 import com.brtvsk.todoservice.model.dto.UpdateTodoRequest;
 import com.brtvsk.todoservice.service.TodoService;
 import com.brtvsk.todoservice.utils.RestMessage;
+import com.brtvsk.todoservice.utils.UserMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,9 @@ class TodoControllerTest {
 
     @MockBean
     private Translator translator;
+
+    @MockBean
+    private UserMapper userMapper;
 
     @MockBean
     private TodoService todoService;

@@ -4,7 +4,9 @@ import com.brtvsk.todoservice.exception.TodoNotFoundException;
 import com.brtvsk.todoservice.model.dto.TodoRequest;
 import com.brtvsk.todoservice.model.dto.TodoResponse;
 import com.brtvsk.todoservice.model.dto.UpdateTodoRequest;
+import com.brtvsk.todoservice.security.model.AuthUser;
 import com.brtvsk.todoservice.service.TodoService;
+import com.brtvsk.todoservice.utils.UserMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -28,9 +30,11 @@ import java.util.UUID;
 public class TodoController {
 
     private final TodoService todoService;
+    private final UserMapper userMapper;
 
-    public TodoController(final TodoService todoService) {
+    public TodoController(final TodoService todoService, final UserMapper userMapper) {
         this.todoService = todoService;
+        this.userMapper = userMapper;
     }
 
     @Operation(summary = "View a list of all todos")
@@ -39,11 +43,12 @@ public class TodoController {
     }
     )
     @GetMapping
-    public List<TodoResponse> all(Optional<Boolean> done, final Authentication authentication) {
+    public List<TodoResponse> all(Optional<Boolean> done, final Authentication auth) {
+        AuthUser user = userMapper.fromAuthentication(auth);
         if (done.isPresent()) {
-            return todoService.findAllDone(done.get(), authentication);
+            return todoService.findAllDone(done.get(), user);
         } else {
-            return todoService.findAll(authentication);
+            return todoService.findAll(user);
         }
     }
 
@@ -53,8 +58,9 @@ public class TodoController {
     }
     )
     @PostMapping
-    public TodoResponse createTodo(@RequestBody final TodoRequest todoDto, final Authentication authentication) {
-        return todoService.create(todoDto, authentication);
+    public TodoResponse createTodo(@RequestBody final TodoRequest todoDto, final Authentication auth) {
+        AuthUser user = userMapper.fromAuthentication(auth);
+        return todoService.create(todoDto, user);
     }
 
     @Operation(summary = "Search a todo with an id")
@@ -64,8 +70,9 @@ public class TodoController {
     }
     )
     @GetMapping("/{id}")
-    public TodoResponse one(@PathVariable final UUID id, final Authentication authentication) {
-        return todoService.findById(id, authentication)
+    public TodoResponse one(@PathVariable final UUID id, final Authentication auth) {
+        AuthUser user = userMapper.fromAuthentication(auth);
+        return todoService.findById(id, user)
                 .orElseThrow(() -> new TodoNotFoundException(id.toString()));
     }
 
@@ -76,8 +83,9 @@ public class TodoController {
     }
     )
     @PutMapping("/{id}")
-    public TodoResponse replaceTodo(@PathVariable final UUID id, @RequestBody final TodoRequest newTodo, final Authentication authentication) {
-        return todoService.replace(id, newTodo, authentication);
+    public TodoResponse replaceTodo(@PathVariable final UUID id, @RequestBody final TodoRequest newTodo, final Authentication auth) {
+        AuthUser user = userMapper.fromAuthentication(auth);
+        return todoService.replace(id, newTodo, user);
     }
 
     @Operation(summary = "Update an existing todo by id")
@@ -87,8 +95,9 @@ public class TodoController {
     }
     )
     @PatchMapping("/{id}")
-    public TodoResponse updateTodo(@PathVariable final UUID id, @RequestBody final UpdateTodoRequest newTodo, final Authentication authentication) {
-        return todoService.update(id, newTodo, authentication);
+    public TodoResponse updateTodo(@PathVariable final UUID id, @RequestBody final UpdateTodoRequest newTodo, final Authentication auth) {
+        AuthUser user = userMapper.fromAuthentication(auth);
+        return todoService.update(id, newTodo, user);
     }
 
     @Operation(summary = "Delete todo by id")
@@ -97,8 +106,9 @@ public class TodoController {
     }
     )
     @DeleteMapping("/{id}")
-    public void deleteTodo(@PathVariable final UUID id, final Authentication authentication) {
-        todoService.delete(id, authentication);
+    public void deleteTodo(@PathVariable final UUID id, final Authentication auth) {
+        AuthUser user = userMapper.fromAuthentication(auth);
+        todoService.delete(id, user);
     }
 
 }

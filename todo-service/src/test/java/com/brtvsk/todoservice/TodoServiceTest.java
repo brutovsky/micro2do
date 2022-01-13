@@ -28,7 +28,6 @@ import static com.brtvsk.todoservice.TodoTestUtils.TEST_TAGS;
 import static com.brtvsk.todoservice.TodoTestUtils.TEST_TITLE;
 import static com.brtvsk.todoservice.TodoTestUtils.USER;
 import static com.brtvsk.todoservice.TodoTestUtils.USER_ID;
-import static com.brtvsk.todoservice.TodoTestUtils.USER_ID_STRING;
 import static com.brtvsk.todoservice.TodoTestUtils.createTestTodo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -69,7 +68,6 @@ class TodoServiceTest {
                 .build();
 
         Mockito.when(mapper.toTodoResponse(any(Todo.class))).thenReturn(expectedTodoDto);
-        Mockito.when(USER.getName()).thenReturn(USER_ID_STRING);
     }
 
     @Test

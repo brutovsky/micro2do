@@ -1,61 +1,125 @@
 package com.brtvsk.todoservice;
 
-import com.brtvsk.todoservice.model.dto.ImmutableUpdateTodoRequest;
 import com.brtvsk.todoservice.model.dto.ImmutableTodoRequest;
-import com.brtvsk.todoservice.model.dto.UpdateTodoRequest;
+import com.brtvsk.todoservice.model.dto.ImmutableUpdateTodoRequest;
 import com.brtvsk.todoservice.model.dto.TodoRequest;
 import com.brtvsk.todoservice.model.dto.TodoResponse;
+import com.brtvsk.todoservice.model.dto.UpdateTodoRequest;
 import com.brtvsk.todoservice.utils.RestMessage;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dasniko.testcontainers.keycloak.KeycloakContainer;
 import io.restassured.RestAssured;
-import io.restassured.response.Response;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.containers.MongoDBContainer;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import static com.brtvsk.todoservice.KeycloakUtils.ADMIN_PASSWORD;
+import static com.brtvsk.todoservice.KeycloakUtils.ADMIN_USERNAME;
+import static com.brtvsk.todoservice.KeycloakUtils.REALM;
+import static com.brtvsk.todoservice.KeycloakUtils.TEST_USER_PASSWORD;
+import static com.brtvsk.todoservice.KeycloakUtils.TEST_USER_USERNAME;
+import static com.brtvsk.todoservice.KeycloakUtils.getAccessToken;
+import static com.brtvsk.todoservice.KeycloakUtils.getAdminAccessToken;
 import static com.brtvsk.todoservice.TodoTestUtils.IS_DONE;
 import static com.brtvsk.todoservice.TodoTestUtils.TEST_DESCRIPTION;
 import static com.brtvsk.todoservice.TodoTestUtils.TEST_TAGS;
 import static com.brtvsk.todoservice.TodoTestUtils.TEST_TITLE;
+import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ContextConfiguration(initializers = TodoControllerIT.MongoDbInitializer.class)
+@ContextConfiguration(initializers = TodoControllerIT.TestcontainersContextInitializer.class)
 class TodoControllerIT {
+
+    private static final String BASE_PATH = "/api/v1/todo/";
+    private static final MongoDBContainer MONGO_DB_CONTAINER;
+    private static final KeycloakContainer KEYCLOAK_CONTAINER;
+    private static final String AUTH_SERVER_URL;
+
+    private static String userAccessToken;
 
     @Autowired
     private ObjectMapper objectMapper;
 
-    private static final MongoDBContainer MONGO_DB_CONTAINER;
-
     static {
         MONGO_DB_CONTAINER = new MongoDBContainer("mongo:5.0");
         MONGO_DB_CONTAINER.start();
-    }
 
-    private static final String BASE_PATH = "/api/v1/todo/";
+        KEYCLOAK_CONTAINER = new KeycloakContainer("jboss/keycloak:16.0.0")
+                .withRealmImportFile("realm-export.json")
+                .withAdminUsername(ADMIN_USERNAME)
+                .withAdminPassword(ADMIN_PASSWORD);
+        KEYCLOAK_CONTAINER.start();
+        AUTH_SERVER_URL = KEYCLOAK_CONTAINER.getAuthServerUrl();
+    }
 
     @LocalServerPort
     void savePort(final int port) {
         RestAssured.port = port;
         RestAssured.basePath = BASE_PATH;
+    }
+
+    @BeforeAll
+    public static void initTestKeycloakUser() throws IOException {
+        String adminAccessToken = getAdminAccessToken(AUTH_SERVER_URL, ADMIN_USERNAME, ADMIN_PASSWORD);
+
+        File file = new ClassPathResource("create-user.json").getFile();
+        String createUserRequest = new String(Files.readAllBytes(file.toPath()));
+
+        given()
+                .auth().oauth2(adminAccessToken)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(createUserRequest)
+                .when()
+                .post(AUTH_SERVER_URL + "/admin/realms/micro2do-realm/users")
+                .then()
+                .assertThat().statusCode(HttpStatus.CREATED.value());
+
+        String userId = given()
+                .auth().oauth2(adminAccessToken)
+                .body(createUserRequest)
+                .when().get(AUTH_SERVER_URL + "/admin/realms/micro2do-realm/users/?username=user")
+                .thenReturn()
+                .jsonPath()
+                .getString("id[0]");
+
+        String updateUserRolesUrl = AUTH_SERVER_URL
+                + "/admin/realms/micro2do-realm/users/"
+                + userId
+                + "/role-mappings/realm";
+        file = new ClassPathResource("update-user-role-mapping.json").getFile();
+        String updateUserRolesRequest = new String(Files.readAllBytes(file.toPath()));
+
+        given()
+                .auth().oauth2(adminAccessToken)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(updateUserRolesRequest)
+                .when().post(updateUserRolesUrl)
+                .then()
+                .statusCode(HttpStatus.NO_CONTENT.value());
+
+        userAccessToken = getAccessToken(AUTH_SERVER_URL, TEST_USER_USERNAME, TEST_USER_PASSWORD);
     }
 
     @Test
@@ -68,11 +132,13 @@ class TodoControllerIT {
 
         final String jsonRequest = objectMapper.writeValueAsString(todoCreationRequest);
 
-        TodoResponse response = RestAssured.given()
+        var response = given()
+                .auth().oauth2(userAccessToken)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(jsonRequest)
                 .when()
                 .post()
+                .thenReturn()
                 .as(TodoResponse.class);
 
         assertThat(response.getId()).isNotNull();
@@ -92,18 +158,22 @@ class TodoControllerIT {
 
         final String jsonRequest = objectMapper.writeValueAsString(todoCreationRequest);
 
-        TodoResponse postResponse = RestAssured.given()
+        var postResponse = given()
+                .auth().oauth2(userAccessToken)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(jsonRequest)
                 .when()
                 .post()
                 .as(TodoResponse.class);
 
-        var getResponse = List.of(RestAssured.given()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                .get()
-                .as(TodoResponse[].class));
+        var getResponse = List.of(
+                given()
+                        .auth().oauth2(userAccessToken)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .when()
+                        .get()
+                        .as(TodoResponse[].class)
+        );
 
         assertThat(getResponse)
                 .hasSizeGreaterThan(1)
@@ -120,14 +190,16 @@ class TodoControllerIT {
 
         final String jsonRequest = objectMapper.writeValueAsString(todoCreationRequest);
 
-        TodoResponse postResponse = RestAssured.given()
+        var postResponse = given()
+                .auth().oauth2(userAccessToken)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(jsonRequest)
                 .when()
                 .post()
                 .as(TodoResponse.class);
 
-        var getResponse = RestAssured.given()
+        var getResponse = given()
+                .auth().oauth2(userAccessToken)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
                 .get("/" + postResponse.getId())
@@ -158,14 +230,16 @@ class TodoControllerIT {
         final String jsonPostRequest = objectMapper.writeValueAsString(todoCreationRequest);
         final String jsonPatchRequest = objectMapper.writeValueAsString(todoUpdateRequest);
 
-        TodoResponse postResponse = RestAssured.given()
+        var postResponse = given()
+                .auth().oauth2(userAccessToken)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(jsonPostRequest)
                 .when()
                 .post()
                 .as(TodoResponse.class);
 
-        var updateResponse = RestAssured.given()
+        var updateResponse = given()
+                .auth().oauth2(userAccessToken)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(jsonPatchRequest)
                 .when()
@@ -204,14 +278,16 @@ class TodoControllerIT {
         final String jsonPostRequest = objectMapper.writeValueAsString(todoCreationRequest);
         final String jsonPutRequest = objectMapper.writeValueAsString(todoReplaceRequest);
 
-        TodoResponse postResponse = RestAssured.given()
+        var postResponse = given()
+                .auth().oauth2(userAccessToken)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(jsonPostRequest)
                 .when()
                 .post()
                 .as(TodoResponse.class);
 
-        var updateResponse = RestAssured.given()
+        var updateResponse = given()
+                .auth().oauth2(userAccessToken)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(jsonPutRequest)
                 .when()
@@ -235,14 +311,16 @@ class TodoControllerIT {
 
         final String jsonPostRequest = objectMapper.writeValueAsString(todoCreationRequest);
 
-        TodoResponse postResponse = RestAssured.given()
+        var postResponse = given()
+                .auth().oauth2(userAccessToken)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(jsonPostRequest)
                 .when()
                 .post()
                 .as(TodoResponse.class);
 
-        Response response = RestAssured.given()
+        var response = given()
+                .auth().oauth2(userAccessToken)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(jsonPostRequest)
                 .when()
@@ -251,7 +329,8 @@ class TodoControllerIT {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK.value());
 
-        response = RestAssured.given()
+        response = given()
+                .auth().oauth2(userAccessToken)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(jsonPostRequest)
                 .when()
@@ -265,7 +344,8 @@ class TodoControllerIT {
     void shouldThrowTodoNotFoundException() {
         UUID id = UUID.randomUUID();
 
-        var response = RestAssured.given()
+        var response = given()
+                .auth().oauth2(userAccessToken)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
                 .get("/" + id)
@@ -279,11 +359,19 @@ class TodoControllerIT {
         assertThat(restMessage.getMessages().get(0)).contains(id.toString());
     }
 
-    static class MongoDbInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+    static class TestcontainersContextInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
         @Override
         public void initialize(@NotNull ConfigurableApplicationContext configurableApplicationContext) {
+            String mongoDbProperty = "spring.data.mongodb.uri="
+                    + MONGO_DB_CONTAINER.getReplicaSetUrl();
+            String jwkSetUriPropery = "spring.security.oauth2.resourceserver.jwt.jwk-set-uri="
+                    + AUTH_SERVER_URL
+                    + "/realms/"
+                    + REALM
+                    + "/protocol/openid-connect/certs";
             TestPropertyValues values = TestPropertyValues.of(
-                    "spring.data.mongodb.uri=" + MONGO_DB_CONTAINER.getReplicaSetUrl()
+                    mongoDbProperty,
+                    jwkSetUriPropery
             );
             values.applyTo(configurableApplicationContext);
         }

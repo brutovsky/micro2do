@@ -1,8 +1,9 @@
-version: "3.7"
+version: "3.8"
+
 services:
   todo-service-database:
     image: mongo:5.0
-    container_name: "todo-service-database"
+    container_name: todo-service-database
     expose:
       - 27017
     ports:
@@ -10,15 +11,48 @@ services:
     volumes:
       - todo:/var/lib/mongodb
   todo-service-api:
-    image: todo-service-image
+    image: library/todo-service-image
     container_name: todo-service-api
     expose:
-      - 8081
+      - 8080
     ports:
-      - "8081:8080"
+      - "8080:8080"
     restart: always
     depends_on:
       - todo-service-database
+
+  auth-service-database:
+    container_name: auth-service-database
+    image: library/postgres:alpine3.15
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: keycloak_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - todo:/var/lib/postgresql
+    restart: unless-stopped
+
+  keycloak:
+    image: jboss/keycloak:16.0.0
+    container_name: keycloak
+    volumes:
+      - ./keycloak/realm-export.json:/opt/jboss/keycloak/imports/realm-export.json
+      - ./keycloak/profile.properties:/opt/jboss/keycloak/standalone/configuration/profile.properties
+    environment:
+      DB_VENDOR: POSTGRES
+      DB_ADDR: auth-service-database
+      DB_DATABASE: keycloak_db
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin_password
+      KEYCLOAK_IMPORT: /opt/jboss/keycloak/imports/realm-export.json
+    ports:
+      - "8484:8080"
+    depends_on:
+      - auth-service-database
 
 volumes:
   todo:

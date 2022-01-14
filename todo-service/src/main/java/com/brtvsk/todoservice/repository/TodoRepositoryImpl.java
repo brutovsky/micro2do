@@ -29,8 +29,23 @@ public class TodoRepositoryImpl implements TodoRepository {
     }
 
     @Override
+    public Optional<Todo> findById(UUID id, UUID userId) {
+        Query query = new Query(
+                Criteria.where("id").is(id)
+                        .andOperator(Criteria.where("ownerId").is(userId))
+        );
+        return mongoTemplate.find(query, Todo.class).stream().findFirst();
+    }
+
+    @Override
     public List<Todo> findAll() {
         return mongoTemplate.findAll(Todo.class);
+    }
+
+    @Override
+    public List<Todo> findAll(UUID userId) {
+        Query query = new Query(Criteria.where("ownerId").is(userId));
+        return mongoTemplate.find(query, Todo.class);
     }
 
     @Override
@@ -39,14 +54,31 @@ public class TodoRepositoryImpl implements TodoRepository {
     }
 
     @Override
-    public void deleteById(final UUID uuid) {
-        Query query = new Query(Criteria.where("id").is(uuid));
+    public void deleteById(final UUID id) {
+        Query query = new Query(Criteria.where("id").is(id));
+        mongoTemplate.remove(query, Todo.class);
+    }
+
+    @Override
+    public void deleteById(final UUID id, final UUID userId) {
+        Query query = new Query(
+                Criteria.where("id").is(id)
+                        .andOperator(Criteria.where("ownerId").is(userId))
+        );
         mongoTemplate.remove(query, Todo.class);
     }
 
     @Override
     public List<Todo> findAllDone(final boolean done) {
         Query query = new Query(Criteria.where("done").is(done));
+        return mongoTemplate.find(query, Todo.class);
+    }
+
+    @Override
+    public List<Todo> findAllDone(final boolean done, final UUID userId) {
+        Query query = new Query(Criteria.where("done").is(done)
+                .andOperator(Criteria.where("ownerId").is(userId))
+        );
         return mongoTemplate.find(query, Todo.class);
     }
 }

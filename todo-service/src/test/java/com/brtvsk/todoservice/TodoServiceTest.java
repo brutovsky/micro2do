@@ -1,12 +1,12 @@
 package com.brtvsk.todoservice;
 
 import com.brtvsk.todoservice.exception.TodoNotFoundException;
-import com.brtvsk.todoservice.model.dto.ImmutableUpdateTodoRequest;
 import com.brtvsk.todoservice.model.dto.ImmutableTodoRequest;
 import com.brtvsk.todoservice.model.dto.ImmutableTodoResponse;
-import com.brtvsk.todoservice.model.dto.UpdateTodoRequest;
+import com.brtvsk.todoservice.model.dto.ImmutableUpdateTodoRequest;
 import com.brtvsk.todoservice.model.dto.TodoRequest;
 import com.brtvsk.todoservice.model.dto.TodoResponse;
+import com.brtvsk.todoservice.model.dto.UpdateTodoRequest;
 import com.brtvsk.todoservice.model.entity.Todo;
 import com.brtvsk.todoservice.repository.TodoRepository;
 import com.brtvsk.todoservice.service.TodoService;
@@ -26,6 +26,8 @@ import static com.brtvsk.todoservice.TodoTestUtils.TEST_DESCRIPTION;
 import static com.brtvsk.todoservice.TodoTestUtils.TEST_ID;
 import static com.brtvsk.todoservice.TodoTestUtils.TEST_TAGS;
 import static com.brtvsk.todoservice.TodoTestUtils.TEST_TITLE;
+import static com.brtvsk.todoservice.TodoTestUtils.USER;
+import static com.brtvsk.todoservice.TodoTestUtils.USER_ID;
 import static com.brtvsk.todoservice.TodoTestUtils.createTestTodo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -72,7 +74,7 @@ class TodoServiceTest {
     void shouldCreateTodo() {
         Mockito.when(repository.save(any(Todo.class))).thenReturn(expectedTodo);
 
-        TodoResponse createdTodoDto = service.create(todoCreationDto);
+        TodoResponse createdTodoDto = service.create(todoCreationDto, USER);
 
         assertThat(createdTodoDto.getId()).isEqualTo(expectedTodoDto.getId());
         assertThat(createdTodoDto.getTitle()).isEqualTo(expectedTodoDto.getTitle());
@@ -89,7 +91,7 @@ class TodoServiceTest {
         expectedTodoDto = ImmutableTodoResponse.copyOf(expectedTodoDto)
                 .withDescription(changedDescription);
 
-        Mockito.when(repository.findById(any(UUID.class))).thenReturn(Optional.of(expectedTodo));
+        Mockito.when(repository.findById(any(UUID.class), any(UUID.class))).thenReturn(Optional.of(expectedTodo));
         Mockito.when(repository.save(any(Todo.class))).thenReturn(expectedTodo2);
         Mockito.when(mapper.toTodoResponse(any(Todo.class))).thenReturn(expectedTodoDto);
 
@@ -97,7 +99,7 @@ class TodoServiceTest {
                 .description(changedDescription)
                 .build();
 
-        TodoResponse createdTodoDto = service.update(TEST_ID, requestDto);
+        TodoResponse createdTodoDto = service.update(TEST_ID, requestDto, USER);
 
         assertThat(createdTodoDto.getId()).isEqualTo(expectedTodoDto.getId());
         assertThat(createdTodoDto.getTitle()).isEqualTo(expectedTodoDto.getTitle());
@@ -112,7 +114,7 @@ class TodoServiceTest {
         Mockito.when(repository.save(any(Todo.class))).thenReturn(expectedTodo);
         Mockito.when(repository.findById(any(UUID.class))).thenReturn(Optional.of(expectedTodo));
 
-        TodoResponse createdTodo = service.create(todoCreationDto);
+        TodoResponse createdTodo = service.create(todoCreationDto, USER);
 
         String changedTitle = "Changed Title";
 
@@ -122,7 +124,7 @@ class TodoServiceTest {
 
         Mockito.when(mapper.toTodoResponse(any(Todo.class))).thenReturn(expectedTodoDto);
 
-        TodoResponse replacedTodo = service.replace(createdTodo.getId(), todoCreationDto);
+        TodoResponse replacedTodo = service.replace(createdTodo.getId(), todoCreationDto, USER);
 
         verify(repository, times(2)).save(any(Todo.class));
 
@@ -132,9 +134,9 @@ class TodoServiceTest {
 
     @Test
     void shouldFindTodo() {
-        Mockito.when(repository.findById(TEST_ID)).thenReturn(Optional.of(expectedTodo));
+        Mockito.when(repository.findById(TEST_ID, USER_ID)).thenReturn(Optional.of(expectedTodo));
 
-        Optional<TodoResponse> optionalTodo = service.findById(TEST_ID);
+        Optional<TodoResponse> optionalTodo = service.findById(TEST_ID, USER);
 
         assertThat(optionalTodo).isNotEmpty();
 
@@ -154,9 +156,9 @@ class TodoServiceTest {
                 createTestTodo(),
                 createTestTodo()
         );
-        Mockito.when(repository.findAll()).thenReturn(testList);
+        Mockito.when(repository.findAll(USER_ID)).thenReturn(testList);
 
-        List<? extends TodoResponse> todoList = service.findAll();
+        List<? extends TodoResponse> todoList = service.findAll(USER);
 
         assertThat(todoList).hasSize(testList.size());
     }
@@ -168,23 +170,23 @@ class TodoServiceTest {
                 createTestTodo(),
                 createTestTodo()
         );
-        Mockito.when(repository.findAllDone(Boolean.FALSE)).thenReturn(testList);
+        Mockito.when(repository.findAllDone(Boolean.FALSE, USER_ID)).thenReturn(testList);
 
-        List<? extends TodoResponse> todoList = service.findAllDone(Boolean.FALSE);
+        List<? extends TodoResponse> todoList = service.findAllDone(Boolean.FALSE, USER);
 
         assertThat(todoList).hasSize(testList.size());
     }
 
     @Test
     void shouldDeleteTodo() {
-        service.delete(TEST_ID);
-        verify(repository, times(1)).deleteById(TEST_ID);
+        service.delete(TEST_ID, USER);
+        verify(repository, times(1)).deleteById(TEST_ID, USER_ID);
     }
 
     @Test
     void shouldThrowTodoNotFoundException() {
         UUID id = UUID.randomUUID();
-        assertThrows(TodoNotFoundException.class, () -> service.replace(id, todoCreationDto));
+        assertThrows(TodoNotFoundException.class, () -> service.replace(id, todoCreationDto, USER));
     }
 
 }

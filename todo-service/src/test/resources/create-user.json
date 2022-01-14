@@ -1,0 +1,11 @@
+{
+  "enabled": "true",
+  "username": "user",
+  "credentials": [
+    {
+      "type": "password",
+      "value": "password",
+      "temporary": false
+    }
+  ]
+}

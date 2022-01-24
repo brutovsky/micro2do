@@ -2,8 +2,6 @@ package com.brtvsk.todoservice;
 
 import com.brtvsk.todoservice.model.entity.Todo;
 import com.brtvsk.todoservice.security.model.AuthUser;
-import org.mockito.Mockito;
-import org.springframework.security.core.Authentication;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;

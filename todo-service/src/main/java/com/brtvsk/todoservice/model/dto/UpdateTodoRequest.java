@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.immutables.value.Value;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -24,4 +25,6 @@ public interface UpdateTodoRequest {
     Optional<Date> getCreationTime();
 
     Optional<Date> getCompletionTime();
+
+    Optional<List<AttachmentRequest>> getAttachments();
 }

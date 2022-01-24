@@ -6,6 +6,7 @@ import org.immutables.value.Value;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -28,4 +29,9 @@ public abstract class TodoRequest {
     public abstract Optional<Date> getCreationTime();
 
     public abstract Optional<Date> getCompletionTime();
+
+    @Value.Default
+    public List<AttachmentRequest> getAttachments() {
+        return Collections.emptyList();
+    }
 }

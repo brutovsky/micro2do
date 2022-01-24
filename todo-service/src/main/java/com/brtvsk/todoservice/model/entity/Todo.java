@@ -5,10 +5,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.Objects;
-
 
 @Document("todos")
 public class Todo {
@@ -22,6 +22,7 @@ public class Todo {
     private Set<String> tags = Collections.emptySet();
     private Date creationTime;
     private Date completionTime;
+    private List<Attachment> attachments = Collections.emptyList();
 
     public UUID getId() {
         return id;
@@ -87,8 +88,16 @@ public class Todo {
         this.completionTime = completionTime;
     }
 
+    public void setAttachments(List<Attachment> attachments) {
+        this.attachments = attachments;
+    }
+
+    public List<Attachment> getAttachments() {
+        return attachments;
+    }
+
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
@@ -96,24 +105,26 @@ public class Todo {
             return false;
         }
         Todo todo = (Todo) o;
-        return id.equals(todo.id) && Objects.equals(title, todo.title) && Objects.equals(description, todo.description) && Objects.equals(done, todo.done) && Objects.equals(tags, todo.tags) && Objects.equals(creationTime, todo.creationTime) && Objects.equals(completionTime, todo.completionTime);
+        return id.equals(todo.id) && ownerId.equals(todo.ownerId) && title.equals(todo.title) && description.equals(todo.description) && done.equals(todo.done) && tags.equals(todo.tags) && creationTime.equals(todo.creationTime) && completionTime.equals(todo.completionTime) && attachments.equals(todo.attachments);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, description, done, tags, creationTime, completionTime);
+        return Objects.hash(id, ownerId, title, description, done, tags, creationTime, completionTime, attachments);
     }
 
     @Override
     public String toString() {
         return "Todo{"
-                + "id='" + id + '\''
+                + "id=" + id
+                + ", ownerId=" + ownerId
                 + ", title='" + title + '\''
                 + ", description='" + description + '\''
-                + ", isDone=" + done
+                + ", done=" + done
                 + ", tags=" + tags
                 + ", creationTime=" + creationTime
                 + ", completionTime=" + completionTime
+                + ", attachments=" + attachments
                 + '}';
     }
 }

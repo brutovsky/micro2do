@@ -5,6 +5,8 @@
     <packaging>pom</packaging>
     <modules>
         <module>todo-service</module>
+        <module>discovery-service</module>
+        <module>media-service</module>
     </modules>
 
     <groupId>com.brtvsk</groupId>
@@ -25,6 +27,7 @@
         <checkstyle.version>3.1.2</checkstyle.version>
         <org.immutables.version>2.8.8</org.immutables.version>
         <spring-boot-starter.version>2.6.1</spring-boot-starter.version>
+        <spring.cloud-version>2021.0.0</spring.cloud-version>
         <spring-security-oauth2-resource-server.version>5.5.1</spring-security-oauth2-resource-server.version>
         <spring-security-oauth2-jose.version>5.6.0</spring-security-oauth2-jose.version>
         <spring-security-test.version>5.5.1</spring-security-test.version>
@@ -35,6 +38,7 @@
         <testcontainer.version>1.16.2</testcontainer.version>
         <testcontainers-keycloak.version>1.9.0</testcontainers-keycloak.version>
         <rest-assured.version>4.4.0</rest-assured.version>
+        <aws-java-sdk.version>1.12.131</aws-java-sdk.version>
         <skipTests>false</skipTests>
         <skipITs>true</skipITs>
         <todoservice.path>todo-service/src/main/java</todoservice.path>
@@ -52,6 +56,14 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
                 <version>${spring-boot-starter.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring.cloud-version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -121,6 +133,12 @@
                 <version>${testcontainers-keycloak.version}</version>
                 <scope>test</scope>
             </dependency>
+
+            <dependency>
+                <groupId>com.amazonaws</groupId>
+                <artifactId>aws-java-sdk</artifactId>
+                <version>${aws-java-sdk.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -157,7 +175,7 @@
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>${checkstyle.version}</version>
                 <configuration>
-                    <configLocation>/src/main/resources/checkstyle.xml</configLocation>
+                    <configLocation>/checkstyle/checkstyle.xml</configLocation>
                 </configuration>
                 <executions>
                     <execution>

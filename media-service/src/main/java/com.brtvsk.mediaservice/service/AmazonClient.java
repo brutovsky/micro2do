@@ -1,10 +1,6 @@
 package com.brtvsk.mediaservice.service;
 
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectResult;
@@ -16,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.unit.DataSize;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -32,29 +27,16 @@ import java.util.UUID;
 
 @Service
 public class AmazonClient {
-    private AmazonS3 s3client;
+    private final AmazonS3 s3client;
     @Value("${s3.bucketName}")
     private String bucketName;
-    @Value("${s3.accessKeyId}")
-    private String accessKeyId;
-    @Value("${s3.secretKey}")
-    private String secretKey;
-    @Value("${s3.region}")
-    private String region;
     @Value("${s3.presignedUrl.expirationDuration}")
     private Duration expirationDuration;
     @Value("${s3.user.max-request-size}")
     private DataSize maximumUserAttachmentSize;
 
-    @PostConstruct
-    private void initializeAmazon() {
-        AWSCredentials credentials
-                = new BasicAWSCredentials(this.accessKeyId, this.secretKey);
-        this.s3client = AmazonS3ClientBuilder
-                .standard()
-                .withRegion(region)
-                .withCredentials(new AWSStaticCredentialsProvider(credentials))
-                .build();
+    public AmazonClient(final AmazonS3 s3client) {
+        this.s3client = s3client;
     }
 
     public URL generateTemporaryLink(final String filename, final UUID associatedObjectId, final AuthUser user) {

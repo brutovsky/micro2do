@@ -2,7 +2,6 @@ package com.brtvsk.mediaservice.controller;
 
 import com.brtvsk.mediaservice.model.dto.AttachmentResponse;
 import com.brtvsk.mediaservice.security.model.AuthUser;
-import com.brtvsk.mediaservice.security.model.AuthUserImpl;
 import com.brtvsk.mediaservice.util.UserMapper;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -46,7 +45,7 @@ public class AttachmentController {
 
     @PostMapping("/{associatedObjectId}")
     @PreAuthorize("#file.size <= @amazonClient.maximumUserAttachmentSizeInBytes() or hasRole('PREMIUM')")
-    public AttachmentResponse uploadFile(@PathVariable final UUID associatedObjectId, @RequestPart MultipartFile file, final Optional<String> description, final Authentication auth) throws Exception {
+    public AttachmentResponse uploadFile(@PathVariable final UUID associatedObjectId, @RequestPart("file") MultipartFile file, final Optional<String> description, final Authentication auth) throws Exception {
         AuthUser user = userMapper.fromAuthentication(auth);
         return this.amazonClient.uploadFile(file, associatedObjectId, description, user);
     }

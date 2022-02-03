@@ -1,6 +1,5 @@
 package com.brtvsk.mediaservice.util;
 
-import com.brtvsk.mediaservice.security.model.AuthUser;
 import com.brtvsk.mediaservice.security.model.AuthUserImpl;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

@@ -6,6 +6,7 @@ import com.brtvsk.mediaservice.model.dto.ImmutableAttachmentResponse;
 import com.brtvsk.mediaservice.service.AmazonClient;
 import com.brtvsk.mediaservice.util.UserMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -13,15 +14,18 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockPart;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.util.NestedServletException;
 
 import java.net.URL;
 import java.util.Optional;
 
+import static com.brtvsk.mediaservice.TestUtils.FAIL_TEST_MAX_SIZE;
 import static com.brtvsk.mediaservice.TestUtils.TEST_DESCRIPTION;
 import static com.brtvsk.mediaservice.TestUtils.TEST_FILENAME;
 import static com.brtvsk.mediaservice.TestUtils.TEST_FILE_CONTENT;
@@ -29,6 +33,8 @@ import static com.brtvsk.mediaservice.TestUtils.TEST_MAX_SIZE;
 import static com.brtvsk.mediaservice.TestUtils.TEST_OBJECT_ID;
 import static com.brtvsk.mediaservice.TestUtils.TEST_SIZE_IN_KB;
 import static com.brtvsk.mediaservice.TestUtils.TEST_URL;
+import static com.brtvsk.mediaservice.TestUtils.TEST_USER_SIZE_IN_KB;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -39,9 +45,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc(addFilters = false)
 @WebAppConfiguration
 class AttachmentControllerTest {
-
-    @Autowired
-    private WebApplicationContext wac;
 
     @Autowired
     private MockMvc mockMvc;
@@ -147,7 +150,8 @@ class AttachmentControllerTest {
 
         final String expectedResponse = objectMapper.writeValueAsString(attachmentResponse);
 
-        MockPart part = new MockPart("file",
+        MockPart part = new MockPart(
+                "file",
                 TEST_FILENAME,
                 TEST_FILE_CONTENT.getBytes());
 
@@ -157,6 +161,45 @@ class AttachmentControllerTest {
                 )
                 .andExpect(status().isOk())
                 .andExpect(content().json(expectedResponse));
+    }
+
+    @WithMockUser(value = "user", roles = {"USER"})
+    @Test
+    void shouldFailForUserRoleUploadFile() {
+        when(amazonClient.maximumUserAttachmentSizeInBytes())
+                .thenReturn(FAIL_TEST_MAX_SIZE);
+
+        MockPart part = new MockPart(
+                "file",
+                TEST_FILENAME,
+                TEST_FILE_CONTENT.getBytes());
+
+        Exception e = Assertions.assertThrows(NestedServletException.class, () -> {
+            mockMvc.perform(MockMvcRequestBuilders
+                    .multipart(BASE_PATH + "/" + TEST_OBJECT_ID)
+                    .part(part)
+            );
+        });
+
+        assertTrue(e.getCause() instanceof AccessDeniedException);
+    }
+
+    @WithMockUser(value = "premium", roles = {"PREMIUM"})
+    @Test
+    void shouldNotFailForPremiumRoleUploadFile() throws Exception {
+        when(amazonClient.maximumUserAttachmentSizeInBytes())
+                .thenReturn(FAIL_TEST_MAX_SIZE);
+
+        MockPart part = new MockPart(
+                "file",
+                TEST_FILENAME,
+                TEST_FILE_CONTENT.getBytes());
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .multipart(BASE_PATH + "/" + TEST_OBJECT_ID)
+                        .part(part)
+                )
+                .andExpect(status().isOk());
     }
 
 }

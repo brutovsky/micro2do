@@ -32,7 +32,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class AmazonClientTest {
+class AmazonClientTest {
     private final AmazonS3 amazonS3 = mock(AmazonS3.class);
     private final AmazonClient amazonClient = new AmazonClient(amazonS3);
 

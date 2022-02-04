@@ -63,7 +63,6 @@ public class TodoServiceImpl implements TodoService {
             throw new TodoNotFoundException(id.toString());
         }
         Todo todo = todoMapper.fromTodoRequest(dto);
-        System.out.println(todo);
         todo.setId(id);
         todo.setOwnerId(user.getId());
         todo.setCreationTime(dto.getCreationTime().orElseGet(() -> Date.from(Instant.now())));

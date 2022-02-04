@@ -22,23 +22,25 @@ final class TodoTestUtils {
     public static final String TEST_DESCRIPTION = "Description 1";
     public static final Boolean IS_DONE = Boolean.FALSE;
     public static final Set<String> TEST_TAGS = Set.of("Tag 1", "Tag 2", "Tag 3");
+    public static final String TEST_RESOURCE_KEY = "key";
+    public static final long TEST_SIZE_IN_KB = 1024L;
+    public static final String TEST_ATTACHMENT_DESCRIPTION = "description";
     public static final List<AttachmentRequest> TEST_ATTACHMENTS_REQUEST = List.of(
             ImmutableAttachmentRequest.builder()
-                    .resourceKey("key1")
-                    .sizeInKb(1024L)
-                    .description("description")
+                    .resourceKey(TEST_RESOURCE_KEY)
+                    .sizeInKb(TEST_SIZE_IN_KB)
+                    .description(TEST_ATTACHMENT_DESCRIPTION)
                     .build()
     );
     public static final List<AttachmentResponse> TEST_ATTACHMENTS_RESPONSE = List.of(
             ImmutableAttachmentResponse.builder()
-                    .resourceKey("key1")
-                    .sizeInKb(1024L)
-                    .description("description")
+                    .resourceKey(TEST_RESOURCE_KEY)
+                    .sizeInKb(TEST_SIZE_IN_KB)
+                    .description(TEST_ATTACHMENT_DESCRIPTION)
                     .build()
     );
     public static final UUID USER_ID = UUID.randomUUID();
     public static final AuthUser USER = new AuthUser(USER_ID);
-    public static final String USER_ID_STRING = USER_ID.toString();
 
     private TodoTestUtils() {
     }

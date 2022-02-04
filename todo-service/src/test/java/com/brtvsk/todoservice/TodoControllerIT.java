@@ -42,6 +42,8 @@ import static com.brtvsk.todoservice.KeycloakUtils.TEST_USER_USERNAME;
 import static com.brtvsk.todoservice.KeycloakUtils.getAccessToken;
 import static com.brtvsk.todoservice.KeycloakUtils.getAdminAccessToken;
 import static com.brtvsk.todoservice.TodoTestUtils.IS_DONE;
+import static com.brtvsk.todoservice.TodoTestUtils.TEST_ATTACHMENTS_REQUEST;
+import static com.brtvsk.todoservice.TodoTestUtils.TEST_ATTACHMENTS_RESPONSE;
 import static com.brtvsk.todoservice.TodoTestUtils.TEST_DESCRIPTION;
 import static com.brtvsk.todoservice.TodoTestUtils.TEST_TAGS;
 import static com.brtvsk.todoservice.TodoTestUtils.TEST_TITLE;
@@ -225,6 +227,7 @@ class TodoControllerIT {
         UpdateTodoRequest todoUpdateRequest = ImmutableUpdateTodoRequest.builder()
                 .title(changedTitle)
                 .description(changedDescription)
+                .attachments(TEST_ATTACHMENTS_REQUEST)
                 .build();
 
         final String jsonPostRequest = objectMapper.writeValueAsString(todoCreationRequest);
@@ -253,6 +256,7 @@ class TodoControllerIT {
         assertThat(updateResponse.getTags()).isEqualTo(postResponse.getTags());
         assertThat(updateResponse.getCreationTime()).isEqualTo(postResponse.getCreationTime());
         assertThat(updateResponse.getCompletionTime()).isEqualTo(postResponse.getCompletionTime());
+        assertThat(updateResponse.getAttachments()).containsAll(TEST_ATTACHMENTS_RESPONSE);
     }
 
     @Test

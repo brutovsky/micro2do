@@ -7,7 +7,7 @@ import com.brtvsk.todoservice.model.entity.Todo;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring",
-        uses = OptionalMapper.class)
+        uses = {OptionalMapper.class, AttachmentMapper.class})
 public interface TodoMapper {
     TodoResponse toTodoResponse(Todo entity);
 

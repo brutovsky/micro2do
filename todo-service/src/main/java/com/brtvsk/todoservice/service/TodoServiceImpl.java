@@ -4,9 +4,11 @@ import com.brtvsk.todoservice.exception.TodoNotFoundException;
 import com.brtvsk.todoservice.model.dto.TodoRequest;
 import com.brtvsk.todoservice.model.dto.TodoResponse;
 import com.brtvsk.todoservice.model.dto.UpdateTodoRequest;
+import com.brtvsk.todoservice.model.entity.Attachment;
 import com.brtvsk.todoservice.model.entity.Todo;
 import com.brtvsk.todoservice.repository.TodoRepository;
 import com.brtvsk.todoservice.security.model.AuthUser;
+import com.brtvsk.todoservice.utils.AttachmentMapper;
 import com.brtvsk.todoservice.utils.TodoMapper;
 import org.springframework.stereotype.Service;
 
@@ -20,10 +22,12 @@ import java.util.UUID;
 public class TodoServiceImpl implements TodoService {
 
     private final TodoMapper todoMapper;
+    private final AttachmentMapper attachmentMapper;
     private final TodoRepository todoRepository;
 
-    public TodoServiceImpl(final TodoMapper todoMapper, final TodoRepository todoRepository) {
+    public TodoServiceImpl(final TodoMapper todoMapper, final AttachmentMapper attachmentMapper, final TodoRepository todoRepository) {
         this.todoMapper = todoMapper;
+        this.attachmentMapper = attachmentMapper;
         this.todoRepository = todoRepository;
     }
 
@@ -61,6 +65,8 @@ public class TodoServiceImpl implements TodoService {
         Todo todo = todoMapper.fromTodoRequest(dto);
         todo.setId(id);
         todo.setOwnerId(user.getId());
+        todo.setCreationTime(dto.getCreationTime().orElseGet(() -> Date.from(Instant.now())));
+        todo.setDone(dto.getDone().orElse(Boolean.FALSE));
         return todoMapper.toTodoResponse(todoRepository.save(todo));
     }
 
@@ -69,12 +75,17 @@ public class TodoServiceImpl implements TodoService {
         Todo todo = todoRepository.findById(id, user.getId())
                 .orElseThrow(() -> new TodoNotFoundException(id.toString()));
 
+        List<Attachment> attachments = attachmentMapper.map(dto.getAttachments());
+
         todo.setTitle(dto.getTitle().orElse(todo.getTitle()));
         todo.setDescription(dto.getDescription().orElse(todo.getDescription()));
         todo.setDone(dto.getDone().orElse(todo.isDone()));
         todo.setTags(dto.getTags().orElse(todo.getTags()));
         todo.setCreationTime(dto.getCreationTime().orElse(todo.getCreationTime()));
         todo.setCompletionTime(dto.getCompletionTime().orElse(todo.getCompletionTime()));
+        if (!attachments.isEmpty()) {
+            todo.setAttachments(attachments);
+        }
 
         return todoMapper.toTodoResponse(todoRepository.save(todo));
     }

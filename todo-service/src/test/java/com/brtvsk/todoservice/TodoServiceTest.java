@@ -11,6 +11,7 @@ import com.brtvsk.todoservice.model.entity.Todo;
 import com.brtvsk.todoservice.repository.TodoRepository;
 import com.brtvsk.todoservice.service.TodoService;
 import com.brtvsk.todoservice.service.TodoServiceImpl;
+import com.brtvsk.todoservice.utils.AttachmentMapper;
 import com.brtvsk.todoservice.utils.TodoMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,8 +39,9 @@ import static org.mockito.Mockito.verify;
 class TodoServiceTest {
 
     private final TodoRepository repository = Mockito.mock(TodoRepository.class);
-    private final TodoMapper mapper = Mockito.mock(TodoMapper.class);
-    private final TodoService service = new TodoServiceImpl(mapper, repository);
+    private final TodoMapper todoMapper = Mockito.mock(TodoMapper.class);
+    private final AttachmentMapper attachmentMapper = Mockito.mock(AttachmentMapper.class);
+    private final TodoService service = new TodoServiceImpl(todoMapper, attachmentMapper, repository);
 
     private TodoRequest todoCreationDto;
     private Todo expectedTodo;
@@ -55,7 +57,7 @@ class TodoServiceTest {
 
         expectedTodo = createTestTodo();
 
-        Mockito.when(mapper.fromTodoRequest(any(TodoRequest.class))).thenReturn(expectedTodo);
+        Mockito.when(todoMapper.fromTodoRequest(any(TodoRequest.class))).thenReturn(expectedTodo);
 
         expectedTodoDto = ImmutableTodoResponse
                 .builder()
@@ -67,7 +69,7 @@ class TodoServiceTest {
                 .creationTime(TEST_CREATION_TIME)
                 .build();
 
-        Mockito.when(mapper.toTodoResponse(any(Todo.class))).thenReturn(expectedTodoDto);
+        Mockito.when(todoMapper.toTodoResponse(any(Todo.class))).thenReturn(expectedTodoDto);
     }
 
     @Test
@@ -93,7 +95,7 @@ class TodoServiceTest {
 
         Mockito.when(repository.findById(any(UUID.class), any(UUID.class))).thenReturn(Optional.of(expectedTodo));
         Mockito.when(repository.save(any(Todo.class))).thenReturn(expectedTodo2);
-        Mockito.when(mapper.toTodoResponse(any(Todo.class))).thenReturn(expectedTodoDto);
+        Mockito.when(todoMapper.toTodoResponse(any(Todo.class))).thenReturn(expectedTodoDto);
 
         UpdateTodoRequest requestDto = ImmutableUpdateTodoRequest.builder()
                 .description(changedDescription)
@@ -122,7 +124,7 @@ class TodoServiceTest {
         todoCreationDto = ImmutableTodoRequest.copyOf(todoCreationDto).withTitle(changedTitle);
         expectedTodoDto = ImmutableTodoResponse.copyOf(expectedTodoDto).withTitle(changedTitle);
 
-        Mockito.when(mapper.toTodoResponse(any(Todo.class))).thenReturn(expectedTodoDto);
+        Mockito.when(todoMapper.toTodoResponse(any(Todo.class))).thenReturn(expectedTodoDto);
 
         TodoResponse replacedTodo = service.replace(createdTodo.getId(), todoCreationDto, USER);
 

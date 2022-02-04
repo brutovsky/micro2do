@@ -30,6 +30,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.brtvsk.todoservice.TodoTestUtils.IS_DONE;
+import static com.brtvsk.todoservice.TodoTestUtils.TEST_ATTACHMENTS_REQUEST;
+import static com.brtvsk.todoservice.TodoTestUtils.TEST_ATTACHMENTS_RESPONSE;
 import static com.brtvsk.todoservice.TodoTestUtils.TEST_COMPLETION_TIME;
 import static com.brtvsk.todoservice.TodoTestUtils.TEST_CREATION_TIME;
 import static com.brtvsk.todoservice.TodoTestUtils.TEST_DESCRIPTION;
@@ -150,6 +152,7 @@ class TodoControllerTest {
                 .tags(TEST_TAGS)
                 .creationTime(TEST_CREATION_TIME)
                 .completionTime(TEST_COMPLETION_TIME)
+                .attachments(TEST_ATTACHMENTS_RESPONSE)
                 .build();
 
         UpdateTodoRequest optionalTodoCreationRequest = ImmutableUpdateTodoRequest.builder()
@@ -157,6 +160,7 @@ class TodoControllerTest {
                 .done(IS_DONE)
                 .completionTime(TEST_COMPLETION_TIME)
                 .tags(TEST_TAGS)
+                .attachments(TEST_ATTACHMENTS_REQUEST)
                 .build();
 
         when(todoService.update(any(UUID.class), any(UpdateTodoRequest.class), any()))

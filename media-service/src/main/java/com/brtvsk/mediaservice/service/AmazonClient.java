@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -50,7 +51,11 @@ public class AmazonClient {
         File file = convertMultiPartToFile(multipartFile);
         String resourceKey = generateResourceKey(multipartFile.getOriginalFilename(), associatedObjectId, user);
         uploadFileTos3bucket(resourceKey, description, file);
-        file.delete();
+        try {
+            Files.delete(file.toPath());
+        } catch (IOException ioe) {
+            System.out.println("Log file deletion fail");
+        }
         ObjectMetadata metadata = s3client.getObjectMetadata(bucketName, resourceKey);
         return generateAttachmentResponse(metadata, multipartFile.getOriginalFilename());
     }
@@ -77,9 +82,9 @@ public class AmazonClient {
     private File convertMultiPartToFile(MultipartFile file)
             throws IOException {
         File convFile = new File(Objects.requireNonNull(file.getOriginalFilename()));
-        FileOutputStream fos = new FileOutputStream(convFile);
-        fos.write(file.getBytes());
-        fos.close();
+        try (FileOutputStream fos = new FileOutputStream(convFile)) {
+            fos.write(file.getBytes());
+        }
         return convFile;
     }
 

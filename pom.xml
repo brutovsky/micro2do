@@ -248,7 +248,7 @@
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>${checkstyle.version}</version>
                 <configuration>
-                    <configLocation>/checkstyle/checkstyle.xml</configLocation>
+                    <configLocation>/config/checkstyle/checkstyle.xml</configLocation>
                 </configuration>
                 <executions>
                     <execution>

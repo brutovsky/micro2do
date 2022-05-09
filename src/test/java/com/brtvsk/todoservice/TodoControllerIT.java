@@ -12,6 +12,7 @@ import dasniko.testcontainers.keycloak.KeycloakContainer;
 import io.restassured.RestAssured;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -50,6 +51,7 @@ import static com.brtvsk.todoservice.TodoTestUtils.TEST_TITLE;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Tag("integration")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(initializers = TodoControllerIT.TestcontainersContextInitializer.class)
 class TodoControllerIT {

@@ -35,7 +35,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew clean build sonarqube -Dsonar.projectKey=brutovsky_micro2do
+        run: ./gradlew clean build sonarqube -Dsonar.login=22ad3dc7dc25e954a3b7db5bea51fb75f3371459
       - name: Archive test report
         uses: actions/upload-artifact@v2
         with:

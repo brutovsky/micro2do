@@ -57,8 +57,18 @@ tasks.test {
         excludes = listOf()
     }
 }
+
 tasks.jacocoTestReport {
     dependsOn(tasks.test) // tests are required to run before generating the report
+}
+
+sonarqube {
+    properties {
+        property("sonar.organization", "brutovsky")
+        property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.projectKey", "brutovsky_micro2do")
+        property("sonar.exclusions", "**/*Config.*")
+    }
 }
 
 //def test = tasks.named("test") {

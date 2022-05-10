@@ -41,7 +41,7 @@ dependencies {
     compileOnly("org.immutables:value:2.8.8")
 
     // My Packages
-    implementation("com.brtvsk:tests-manager-annotations:1.0-SNAPSHOT")
+    implementation("com.brtvsk:tests-manager-annotations:1.0")
 }
 
 group = "com.brtvsk"
@@ -50,7 +50,6 @@ description = "todo-service"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 tasks.test {
-    ignoreFailures = true
     val integrationTest = System.getProperty("integrationTest")?.toBoolean() ?: false
     useJUnitPlatform {
         if (integrationTest) includeTags("integration") else excludeTags("integration")

@@ -1,5 +1,6 @@
 package com.brtvsk.todoservice;
 
+import com.brtvsk.testsmanager.annotations.Fast;
 import com.brtvsk.todoservice.exception.TodoNotFoundException;
 import com.brtvsk.todoservice.model.dto.ImmutableTodoRequest;
 import com.brtvsk.todoservice.model.dto.ImmutableTodoResponse;
@@ -36,6 +37,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+@Fast
 class TodoServiceTest {
 
     private final TodoRepository repository = Mockito.mock(TodoRepository.class);
@@ -104,7 +106,7 @@ class TodoServiceTest {
         TodoResponse createdTodoDto = service.update(TEST_ID, requestDto, USER);
 
         assertThat(createdTodoDto.getId()).isEqualTo(expectedTodoDto.getId());
-        assertThat(createdTodoDto.getTitle()).isEqualTo(expectedTodoDto.getTitle());
+        assertThat(createdTodoDto.getTitle()).isEqualTo("WRONG TITLE");
         assertThat(createdTodoDto.getDescription()).isEqualTo(expectedTodoDto.getDescription());
         assertThat(createdTodoDto.getTags()).containsAll(expectedTodoDto.getTags());
         assertThat(createdTodoDto.getDone()).isEqualTo(expectedTodoDto.getDone());

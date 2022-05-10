@@ -8,14 +8,15 @@ plugins {
     checkstyle
     jacoco
     id("org.springframework.boot") version "2.6.1"
-    id("com.monnage.test-report") version "1.4"
+    id("com.brtvsk.tests-manager") version "1.0"
     id("org.sonarqube") version "3.3"
 }
 
 repositories {
-    mavenLocal()
+    mavenCentral()
     maven {
-        url = uri("https://repo.maven.apache.org/maven2/")
+        name = "MyPrivateGCPRepo"
+        url = uri("https://original-glyph-349716.lm.r.appspot.com/")
     }
 }
 
@@ -38,6 +39,9 @@ dependencies {
     testImplementation("io.rest-assured:rest-assured:4.4.0")
     testImplementation("org.springframework.security:spring-security-test:5.5.1")
     compileOnly("org.immutables:value:2.8.8")
+
+    // My Packages
+    implementation("com.brtvsk:tests-manager-annotations:1.0-SNAPSHOT")
 }
 
 group = "com.brtvsk"
@@ -45,8 +49,8 @@ version = "1.0-SNAPSHOT"
 description = "todo-service"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
-// JaCoCo
 tasks.test {
+    ignoreFailures = true
     val integrationTest = System.getProperty("integrationTest")?.toBoolean() ?: false
     useJUnitPlatform{
         if (integrationTest) includeTags("integration") else excludeTags("integration")
@@ -71,64 +75,8 @@ sonarqube {
     }
 }
 
-//def test = tasks.named("test") {
-//    useJUnitPlatform {
-//        excludeTags "integration"
-//    }
-//}
-
-//task<Test>("test") {
-//    useJUnitPlatform {
-//        excludeTags("integration")
-//    }
-//    description = "Runs unit tests"
-//    group = "verification"
-//    testClassesDirs = sourceSets["integrationTest"].output.classesDirs
-//    classpath = sourceSets["integrationTest"].runtimeClasspath
-//    mustRunAfter(tasks["test"])
-//}
-
-//def integrationTest = tasks.register("integrationTest2", Test) {
-//    useJUnitPlatform {
-//        includeTags "integration"
-//    }
-//    shouldRunAfter test
-//}
-
-//tasks.named("check") {
-//    dependsOn(integrationTest)
-//}
-
-//sourceSets {
-//    test {
-//        java {
-//            dir = ["test/java/com/brtvsk/todoservice"]
-//        }
-//    }
-//}
-
-//publishing {
-//    publications.create<MavenPublication>("maven") {
-//        from(components["java"])
-//    }
-//}
-
-//tasks.withType(JavaCompile::class.java) {
-//    doFirst {
-//        println("AnnotationProcessorPath for $name is ${options.annotationProcessorPath?.files}")
-//    }
-//}
-//
-//tasks.withType<Checkstyle>().configureEach {
-//    reports {
-//        xml.required.set(false)
-//        html.required.set(true)
-////        html.stylesheet = resources.text.fromFile("config/xsl/checkstyle-custom.xsl")
-//    }
-//}
-
-
-
-//tasks.withType(JavaCompile) {
-//    options.compilerArgs.addAll(['--add-modules', 'java.xml.bind'])
-//}
+testsManagerConfig {
+    enabled = true
+    tag("85%")
+    tag("fast", "50%")
+}

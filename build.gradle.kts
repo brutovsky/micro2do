@@ -65,9 +65,10 @@ tasks.jacocoTestReport {
     dependsOn(tasks.test) // tests are required to run before generating the report
     reports {
         html.required.set(true)
-        xml.required.set(false)
+        xml.required.set(true)
         csv.required.set(false)
         html.outputLocation.set(layout.buildDirectory.dir("reports/jacoco/html"))
+        xml.outputLocation.set(layout.buildDirectory.dir("reports/jacoco/xml/report.xml").get().asFile)
     }
     classDirectories.setFrom(
         files(classDirectories.files.map {
@@ -89,6 +90,7 @@ sonarqube {
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.projectKey", "brutovsky_micro2do")
         property("sonar.exclusions", "**/*Config.*, **/*ServiceApplication.*")
+        property("sonar.coverage.jacoco.xmlReportPaths", layout.buildDirectory.dir("reports/jacoco/xml").get().asFile.path)
     }
 }
 

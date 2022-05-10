@@ -58,12 +58,31 @@ tasks.test {
     finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
     configure<JacocoTaskExtension> {
         isEnabled = true
-        excludes = listOf()
     }
 }
 
 tasks.jacocoTestReport {
     dependsOn(tasks.test) // tests are required to run before generating the report
+    reports {
+        html.required.set(true)
+        xml.required.set(false)
+        csv.required.set(false)
+        html.outputLocation.set(layout.buildDirectory.dir("reports/jacoco/html"))
+    }
+    afterEvaluate {
+        classDirectories.setFrom(
+            files(classDirectories.files.map {
+                fileTree(it) {
+                    exclude(
+                        "com/brtvsk/todoservice/config/**/*",
+                        "com/brtvsk/todoservice/model/**/*",
+                        "**/*Config.*",
+                        "**/TodoServiceApplication.*"
+                    )
+                }
+            })
+        )
+    }
 }
 
 sonarqube {
@@ -71,7 +90,7 @@ sonarqube {
         property("sonar.organization", "brutovsky")
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.projectKey", "brutovsky_micro2do")
-        property("sonar.exclusions", "**/*Config.*")
+        property("sonar.exclusions", "**/*Config.*, **/*ServiceApplication.*")
     }
 }
 

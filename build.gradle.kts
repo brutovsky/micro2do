@@ -52,7 +52,7 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 tasks.test {
     ignoreFailures = true
     val integrationTest = System.getProperty("integrationTest")?.toBoolean() ?: false
-    useJUnitPlatform{
+    useJUnitPlatform {
         if (integrationTest) includeTags("integration") else excludeTags("integration")
     }
     finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
@@ -69,20 +69,18 @@ tasks.jacocoTestReport {
         csv.required.set(false)
         html.outputLocation.set(layout.buildDirectory.dir("reports/jacoco/html"))
     }
-    afterEvaluate {
-        classDirectories.setFrom(
-            files(classDirectories.files.map {
-                fileTree(it) {
-                    exclude(
-                        "com/brtvsk/todoservice/config/**/*",
-                        "com/brtvsk/todoservice/model/**/*",
-                        "**/*Config.*",
-                        "**/TodoServiceApplication.*"
-                    )
-                }
-            })
-        )
-    }
+    classDirectories.setFrom(
+        files(classDirectories.files.map {
+            fileTree(it).matching {
+                exclude(
+                    "com/brtvsk/todoservice/config/**/*",
+                    "com/brtvsk/todoservice/model/**/*",
+                    "**/*Config.*",
+                    "**/TodoServiceApplication.*"
+                )
+            }
+        })
+    )
 }
 
 sonarqube {

@@ -68,7 +68,7 @@ tasks.jacocoTestReport {
         xml.required.set(true)
         csv.required.set(false)
         html.outputLocation.set(layout.buildDirectory.dir("reports/jacoco/html"))
-        xml.outputLocation.set(layout.buildDirectory.dir("reports/jacoco/xml/report.xml").get().asFile)
+        xml.outputLocation.set(layout.buildDirectory.dir("reports/jacoco/xml/jacocoTestReport.xml").get().asFile)
     }
     classDirectories.setFrom(
         files(classDirectories.files.map {
@@ -90,7 +90,7 @@ sonarqube {
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.projectKey", "brutovsky_micro2do")
         property("sonar.exclusions", "**/*Config.*, **/*ServiceApplication.*")
-        property("sonar.coverage.jacoco.xmlReportPaths", layout.buildDirectory.dir("reports/jacoco/xml").get().asFile.path)
+        property("sonar.coverage.jacoco.xmlReportPaths", layout.buildDirectory.dir("reports/jacoco/xml/jacocoTestReport.xml").get().asFile.path)
     }
 }
 

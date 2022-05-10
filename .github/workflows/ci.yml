@@ -35,11 +35,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew clean build sonarqube
+        run: ./gradlew clean build -x test sonarqube
       - name: Archive test report
         uses: actions/upload-artifact@v2
         with:
           name: Test report
           path: build/reports/tests/test
+      - name: Run tests
+        run: ./gradlew test
       - name: Run integration tests
         run: ./gradlew test -DintegrationTest=true

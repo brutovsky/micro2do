@@ -1,5 +1,8 @@
 package com.brtvsk.todoservice;
 
+import com.brtvsk.testsmanager.annotations.HighPriorityTest;
+import com.brtvsk.testsmanager.annotations.LowPriorityTest;
+import com.brtvsk.testsmanager.annotations.Unit;
 import com.brtvsk.todoservice.controller.TodoController;
 import com.brtvsk.todoservice.exception.TodoNotFoundException;
 import com.brtvsk.todoservice.i18n.Translator;
@@ -13,7 +16,6 @@ import com.brtvsk.todoservice.service.TodoService;
 import com.brtvsk.todoservice.utils.RestMessage;
 import com.brtvsk.todoservice.utils.UserMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -44,6 +46,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@Unit
 @WebMvcTest(TodoController.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ContextConfiguration
@@ -67,7 +70,7 @@ class TodoControllerTest {
     private static final String BASE_PATH = "/api/v1/todo/";
 
     @WithMockUser(value = "user", roles = {"USER"})
-    @Test
+    @HighPriorityTest
     void shouldCreateTodo() throws Exception {
         TodoResponse expectedTodoResponse = ImmutableTodoResponse
                 .builder()
@@ -104,7 +107,7 @@ class TodoControllerTest {
     }
 
     @WithMockUser(value = "user", roles = {"USER"})
-    @Test
+    @HighPriorityTest
     void shouldReplaceTodo() throws Exception {
         TodoResponse expectedTodoResponse = ImmutableTodoResponse
                 .builder()
@@ -141,7 +144,7 @@ class TodoControllerTest {
     }
 
     @WithMockUser(value = "user", roles = {"USER"})
-    @Test
+    @HighPriorityTest
     void shouldUpdateTodo() throws Exception {
         TodoResponse expectedTodoResponse = ImmutableTodoResponse
                 .builder()
@@ -181,7 +184,7 @@ class TodoControllerTest {
     }
 
     @WithMockUser(value = "user", roles = {"USER"})
-    @Test
+    @HighPriorityTest
     void shouldFindTodo() throws Exception {
         TodoResponse expectedTodoResponse = ImmutableTodoResponse
                 .builder()
@@ -206,7 +209,7 @@ class TodoControllerTest {
     }
 
     @WithMockUser(value = "user", roles = {"USER"})
-    @Test
+    @HighPriorityTest
     void shouldFindAll() throws Exception {
         List<TodoResponse> expectedList = List.of(
                 ImmutableTodoResponse.builder()
@@ -235,7 +238,7 @@ class TodoControllerTest {
     }
 
     @WithMockUser(value = "user", roles = {"USER"})
-    @Test
+    @HighPriorityTest
     void shouldFindAllDone() throws Exception {
         List<TodoResponse> expectedList = List.of(
                 ImmutableTodoResponse.builder()
@@ -264,7 +267,7 @@ class TodoControllerTest {
     }
 
     @WithMockUser(value = "user", roles = {"USER"})
-    @Test
+    @HighPriorityTest
     void shouldDeleteTodo() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete(BASE_PATH + TEST_ID))
                 .andExpect(MockMvcResultMatchers.status().isOk());
@@ -273,7 +276,7 @@ class TodoControllerTest {
     }
 
     @WithMockUser(value = "user", roles = {"USER"})
-    @Test
+    @LowPriorityTest
     void shouldThrowTodoNotFoundException() throws Exception {
         String msg = TEST_ID.toString();
 

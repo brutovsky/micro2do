@@ -1,10 +1,13 @@
 package com.brtvsk.todoservice;
 
-import com.brtvsk.todoservice.model.dto.ImmutableUpdateTodoRequest;
+import com.brtvsk.testsmanager.annotations.Fast;
+import com.brtvsk.testsmanager.annotations.HighPriority;
+import com.brtvsk.testsmanager.annotations.Unit;
 import com.brtvsk.todoservice.model.dto.ImmutableTodoRequest;
-import com.brtvsk.todoservice.model.dto.UpdateTodoRequest;
+import com.brtvsk.todoservice.model.dto.ImmutableUpdateTodoRequest;
 import com.brtvsk.todoservice.model.dto.TodoRequest;
 import com.brtvsk.todoservice.model.dto.TodoResponse;
+import com.brtvsk.todoservice.model.dto.UpdateTodoRequest;
 import com.brtvsk.todoservice.model.entity.Todo;
 import com.brtvsk.todoservice.utils.OptionalMapper;
 import com.brtvsk.todoservice.utils.TodoMapper;
@@ -28,6 +31,9 @@ import static com.brtvsk.todoservice.TodoTestUtils.TEST_TITLE;
 import static com.brtvsk.todoservice.TodoTestUtils.createTestTodo;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Unit
+@HighPriority
+@Fast
 @ContextConfiguration(classes = TodoMapperTest.TodoMapperTestConfig.class)
 @ExtendWith(SpringExtension.class)
 @SpringBootTest

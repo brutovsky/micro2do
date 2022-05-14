@@ -95,6 +95,8 @@ sonarqube {
 
 testsManagerConfig {
     enabled = true
-    tag("85%")
-    tag("fast", "50%")
+    tag("100%")
+    tag("integration", "80%")
+    tag("slow", "90%")
+    tag("lowPriority", "80")
 }

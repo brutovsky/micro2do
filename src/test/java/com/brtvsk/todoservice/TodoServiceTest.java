@@ -1,6 +1,8 @@
 package com.brtvsk.todoservice;
 
 import com.brtvsk.testsmanager.annotations.Fast;
+import com.brtvsk.testsmanager.annotations.HighPriorityTest;
+import com.brtvsk.testsmanager.annotations.LowPriorityTest;
 import com.brtvsk.todoservice.exception.TodoNotFoundException;
 import com.brtvsk.todoservice.model.dto.ImmutableTodoRequest;
 import com.brtvsk.todoservice.model.dto.ImmutableTodoResponse;
@@ -15,7 +17,6 @@ import com.brtvsk.todoservice.service.TodoServiceImpl;
 import com.brtvsk.todoservice.utils.AttachmentMapper;
 import com.brtvsk.todoservice.utils.TodoMapper;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.List;
@@ -37,7 +38,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@Fast
 class TodoServiceTest {
 
     private final TodoRepository repository = Mockito.mock(TodoRepository.class);
@@ -74,7 +74,7 @@ class TodoServiceTest {
         Mockito.when(todoMapper.toTodoResponse(any(Todo.class))).thenReturn(expectedTodoDto);
     }
 
-    @Test
+    @HighPriorityTest
     void shouldCreateTodo() {
         Mockito.when(repository.save(any(Todo.class))).thenReturn(expectedTodo);
 
@@ -87,7 +87,7 @@ class TodoServiceTest {
         assertThat(createdTodoDto.getCreationTime()).isEqualTo(expectedTodoDto.getCreationTime());
     }
 
-    @Test
+    @LowPriorityTest
     void shouldUpdateTodo() {
         String changedDescription = "Changed Description";
         Todo expectedTodo2 = createTestTodo();
@@ -106,14 +106,14 @@ class TodoServiceTest {
         TodoResponse createdTodoDto = service.update(TEST_ID, requestDto, USER);
 
         assertThat(createdTodoDto.getId()).isEqualTo(expectedTodoDto.getId());
-        assertThat(createdTodoDto.getTitle()).isEqualTo("WRONG TITLE");
+        assertThat(createdTodoDto.getTitle()).isEqualTo(expectedTodoDto.getTitle());
         assertThat(createdTodoDto.getDescription()).isEqualTo(expectedTodoDto.getDescription());
         assertThat(createdTodoDto.getTags()).containsAll(expectedTodoDto.getTags());
         assertThat(createdTodoDto.getDone()).isEqualTo(expectedTodoDto.getDone());
         assertThat(createdTodoDto.getCreationTime()).isEqualTo(expectedTodoDto.getCreationTime());
     }
 
-    @Test
+    @LowPriorityTest
     void shouldReplaceTodo() {
         Mockito.when(repository.save(any(Todo.class))).thenReturn(expectedTodo);
         Mockito.when(repository.findById(any(UUID.class))).thenReturn(Optional.of(expectedTodo));
@@ -136,7 +136,7 @@ class TodoServiceTest {
         assertThat(replacedTodo.getTitle()).isEqualTo(changedTitle);
     }
 
-    @Test
+    @HighPriorityTest
     void shouldFindTodo() {
         Mockito.when(repository.findById(TEST_ID, USER_ID)).thenReturn(Optional.of(expectedTodo));
 
@@ -153,7 +153,7 @@ class TodoServiceTest {
         assertThat(todo.getCreationTime()).isEqualTo(expectedTodoDto.getCreationTime());
     }
 
-    @Test
+    @HighPriorityTest
     void shouldFindAll() {
         List<Todo> testList = List.of(
                 createTestTodo(),
@@ -167,7 +167,7 @@ class TodoServiceTest {
         assertThat(todoList).hasSize(testList.size());
     }
 
-    @Test
+    @HighPriorityTest
     void shouldFindAllDone() {
         List<Todo> testList = List.of(
                 createTestTodo(),
@@ -181,13 +181,13 @@ class TodoServiceTest {
         assertThat(todoList).hasSize(testList.size());
     }
 
-    @Test
+    @LowPriorityTest
     void shouldDeleteTodo() {
         service.delete(TEST_ID, USER);
-        verify(repository, times(1)).deleteById(TEST_ID, USER_ID);
+        verify(repository, times(2)).deleteById(TEST_ID, USER_ID);
     }
 
-    @Test
+    @LowPriorityTest
     void shouldThrowTodoNotFoundException() {
         UUID id = UUID.randomUUID();
         assertThrows(TodoNotFoundException.class, () -> service.replace(id, todoCreationDto, USER));

@@ -1,5 +1,9 @@
 package com.brtvsk.todoservice;
 
+import com.brtvsk.testsmanager.annotations.Fast;
+import com.brtvsk.testsmanager.annotations.HighPriority;
+import com.brtvsk.testsmanager.annotations.LowPriorityTest;
+import com.brtvsk.testsmanager.annotations.Unit;
 import com.brtvsk.todoservice.model.entity.Todo;
 import com.brtvsk.todoservice.repository.TodoRepository;
 import com.brtvsk.todoservice.repository.TodoRepositoryImpl;
@@ -10,51 +14,51 @@ import org.springframework.data.mongodb.core.query.Query;
 import java.util.UUID;
 
 import static com.brtvsk.todoservice.TodoTestUtils.createTestTodo;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
 
 class TodoRepositoryTest {
 
     private final MongoTemplate mongoTemplate = mock(MongoTemplate.class);
     private final TodoRepository repository = new TodoRepositoryImpl(mongoTemplate);
 
-    @Test
+    @LowPriorityTest
     void shouldFindAll() {
         repository.findAll();
         verify(mongoTemplate, times(1)).findAll(Todo.class);
     }
 
-    @Test
+    @LowPriorityTest
     void shouldFindAllSecured() {
         UUID userId = UUID.randomUUID();
         repository.findAll(userId);
         verify(mongoTemplate, times(1)).find(any(Query.class), eq(Todo.class));
     }
 
-    @Test
+    @LowPriorityTest
     void shouldFindAllDone() {
         repository.findAllDone(true);
         verify(mongoTemplate, times(1)).find(any(Query.class), eq(Todo.class));
     }
 
-    @Test
+    @LowPriorityTest
     void shouldFindAllDoneSecured() {
         UUID userId = UUID.randomUUID();
         repository.findAllDone(true, userId);
         verify(mongoTemplate, times(1)).find(any(Query.class), eq(Todo.class));
     }
 
-    @Test
+    @LowPriorityTest
     void shouldFindById() {
         UUID id = UUID.randomUUID();
         repository.findById(id);
         verify(mongoTemplate, times(1)).findById(id, Todo.class);
     }
 
-    @Test
+    @LowPriorityTest
     void shouldFindByIdSecured() {
         UUID id = UUID.randomUUID();
         UUID userId = UUID.randomUUID();
@@ -62,33 +66,33 @@ class TodoRepositoryTest {
         verify(mongoTemplate, times(1)).find(any(Query.class), eq(Todo.class));
     }
 
-    @Test
+    @LowPriorityTest
     void shouldSave() {
         Todo todo = createTestTodo();
         repository.save(todo);
         verify(mongoTemplate, times(1)).save(todo);
     }
 
-    @Test
+    @LowPriorityTest
     void shouldDelete() {
         Todo todo = createTestTodo();
         repository.delete(todo);
         verify(mongoTemplate, times(1)).remove(todo);
     }
 
-    @Test
+    @LowPriorityTest
     void shouldDeleteById() {
         UUID id = UUID.randomUUID();
         repository.deleteById(id);
-        verify(mongoTemplate, times(1)).remove(any(Query.class), eq(Todo.class));
+        verify(mongoTemplate, times(2)).remove(any(Query.class), eq(Todo.class));
     }
 
-    @Test
+    @LowPriorityTest
     void shouldDeleteByIdSecured() {
         UUID id = UUID.randomUUID();
         UUID userId = UUID.randomUUID();
         repository.deleteById(id, userId);
-        verify(mongoTemplate, times(1)).remove(any(Query.class), eq(Todo.class));
+        verify(mongoTemplate, times(2)).remove(any(Query.class), eq(Todo.class));
     }
 
 }

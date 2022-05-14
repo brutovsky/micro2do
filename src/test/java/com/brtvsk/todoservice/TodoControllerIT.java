@@ -1,5 +1,9 @@
 package com.brtvsk.todoservice;
 
+import com.brtvsk.testsmanager.annotations.HighPriorityTest;
+import com.brtvsk.testsmanager.annotations.Integration;
+import com.brtvsk.testsmanager.annotations.LowPriorityTest;
+import com.brtvsk.testsmanager.annotations.Slow;
 import com.brtvsk.todoservice.model.dto.ImmutableTodoRequest;
 import com.brtvsk.todoservice.model.dto.ImmutableUpdateTodoRequest;
 import com.brtvsk.todoservice.model.dto.TodoRequest;
@@ -12,8 +16,6 @@ import dasniko.testcontainers.keycloak.KeycloakContainer;
 import io.restassured.RestAssured;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.util.TestPropertyValues;
@@ -51,7 +53,8 @@ import static com.brtvsk.todoservice.TodoTestUtils.TEST_TITLE;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Tag("integration")
+@Slow
+@Integration
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(initializers = TodoControllerIT.TestcontainersContextInitializer.class)
 class TodoControllerIT {
@@ -126,7 +129,7 @@ class TodoControllerIT {
         userAccessToken = getAccessToken(AUTH_SERVER_URL, TEST_USER_USERNAME, TEST_USER_PASSWORD);
     }
 
-    @Test
+    @HighPriorityTest
     void shouldPostTodo() throws Exception {
         TodoRequest todoCreationRequest = ImmutableTodoRequest.builder()
                 .title(TEST_TITLE)
@@ -154,7 +157,7 @@ class TodoControllerIT {
         assertThat(response.getCompletionTime()).isNotPresent();
     }
 
-    @Test
+    @HighPriorityTest
     void shouldGetAllTodo() throws JsonProcessingException {
         TodoRequest todoCreationRequest = ImmutableTodoRequest.builder()
                 .title(TEST_TITLE)
@@ -184,7 +187,7 @@ class TodoControllerIT {
                 .anyMatch(dto -> dto.getId().equals(postResponse.getId()));
     }
 
-    @Test
+    @HighPriorityTest
     void shouldGetTodo() throws JsonProcessingException {
         TodoRequest todoCreationRequest = ImmutableTodoRequest.builder()
                 .title(TEST_TITLE)
@@ -216,7 +219,7 @@ class TodoControllerIT {
         assertThat(getResponse.getTags()).containsAll(TEST_TAGS);
     }
 
-    @Test
+    @HighPriorityTest
     void shouldUpdateTodo() throws JsonProcessingException {
         String changedTitle = "Changed title";
         String changedDescription = "Changed description";
@@ -261,7 +264,7 @@ class TodoControllerIT {
         assertThat(updateResponse.getAttachments()).containsAll(TEST_ATTACHMENTS_RESPONSE);
     }
 
-    @Test
+    @HighPriorityTest
     void shouldReplaceTodo() throws JsonProcessingException {
         String changedTitle = "Changed title";
         String changedDescription = "Changed description";
@@ -308,7 +311,7 @@ class TodoControllerIT {
         assertThat(updateResponse.getCompletionTime()).contains(changedCompletionTime);
     }
 
-    @Test
+    @HighPriorityTest
     void shouldDeleteTodo() throws JsonProcessingException {
         TodoRequest todoCreationRequest = ImmutableTodoRequest.builder()
                 .title(TEST_TITLE)
@@ -346,7 +349,7 @@ class TodoControllerIT {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
     }
 
-    @Test
+    @LowPriorityTest
     void shouldThrowTodoNotFoundException() {
         UUID id = UUID.randomUUID();
 

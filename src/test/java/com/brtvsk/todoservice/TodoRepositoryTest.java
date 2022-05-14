@@ -1,13 +1,9 @@
 package com.brtvsk.todoservice;
 
-import com.brtvsk.testsmanager.annotations.Fast;
-import com.brtvsk.testsmanager.annotations.HighPriority;
 import com.brtvsk.testsmanager.annotations.LowPriorityTest;
-import com.brtvsk.testsmanager.annotations.Unit;
 import com.brtvsk.todoservice.model.entity.Todo;
 import com.brtvsk.todoservice.repository.TodoRepository;
 import com.brtvsk.todoservice.repository.TodoRepositoryImpl;
-import org.junit.jupiter.api.Test;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 

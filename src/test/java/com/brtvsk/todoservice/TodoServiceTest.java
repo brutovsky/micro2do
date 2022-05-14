@@ -1,6 +1,5 @@
 package com.brtvsk.todoservice;
 
-import com.brtvsk.testsmanager.annotations.Fast;
 import com.brtvsk.testsmanager.annotations.HighPriorityTest;
 import com.brtvsk.testsmanager.annotations.LowPriorityTest;
 import com.brtvsk.todoservice.exception.TodoNotFoundException;

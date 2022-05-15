@@ -105,7 +105,7 @@ class TodoServiceTest {
         TodoResponse createdTodoDto = service.update(TEST_ID, requestDto, USER);
 
         assertThat(createdTodoDto.getId()).isEqualTo(expectedTodoDto.getId());
-        assertThat(createdTodoDto.getTitle()).isEqualTo(expectedTodoDto.getTitle());
+        assertThat(createdTodoDto.getTitle()).isEqualTo("Wrong Title");
         assertThat(createdTodoDto.getDescription()).isEqualTo(expectedTodoDto.getDescription());
         assertThat(createdTodoDto.getTags()).containsAll(expectedTodoDto.getTags());
         assertThat(createdTodoDto.getDone()).isEqualTo(expectedTodoDto.getDone());

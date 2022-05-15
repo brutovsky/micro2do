@@ -36,7 +36,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
         run: ./gradlew clean build -x test
       - name: Run tests
-        run: ./gradlew test
+        run: ./gradlew test -PtestsManager.verbose
       - name: Run Sonarqube
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
